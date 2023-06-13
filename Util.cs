@@ -90,6 +90,28 @@ namespace tespygtk
             }
             return "0 Ko";
         }
+        public static bool Rpa(string FilePath)
+        {
+            System.IO.Directory.CreateDirectory(FilePath);
+                //string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder);
+            string[] files = System.IO.Directory.GetFiles(FilePath, "*.rpa", System.IO.SearchOption.AllDirectories);
+            Array.Sort(files);
+
+            foreach (string file in files)
+            {
+                string fileName = System.IO.Path.GetFileName(file);
+                string targetPath = System.IO.Path.Combine(FilePath, fileName);
+                //long length = new System.IO.FileInfo(file).Length;
+
+                //string lenght = Util.rpafile(file);
+
+                System.IO.File.Move(file, targetPath);
+                //Console.WriteLine(length);
+
+                    
+            }
+            return true;
+        }
 
     public static void addTabs(TextView source, TextView texte, TextView sauv) 
     {

@@ -41,6 +41,10 @@ namespace tespygtk
         [UI] private ListBox _listerror = null;
         [UI] private Button _btnopenfolder = null;
 
+        [UI] private MenuItem _btnrpa = null;
+
+        [UI] private MenuItem _btnunren = null;
+
         [UI] private Button _btnextract = null;
 
         [UI] private Button _btntranslate = null;
@@ -177,6 +181,8 @@ namespace tespygtk
             _btntranslate.Clicked += btntranslate_Clicked;
             _btncompile.Clicked += btncompile_Clicked;
 
+            _btnrpa.Activated += _btnrpa_Clicked;
+
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
 
@@ -283,6 +289,7 @@ namespace tespygtk
     
 //            _entryselect
         }
+
 
         private void poperror_DeleteEvent(object sender, DeleteEventArgs a)
         {
@@ -947,6 +954,22 @@ namespace tespygtk
 
                 treeselection_Update();
             
+        }
+
+        private void _btnrpa_Clicked(object sender, EventArgs a)
+        {
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
+            FileChooserAction.SelectFolder,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+
+            if (filechooser.Run() == (int)ResponseType.Accept) 
+            {
+                Util.Rpa(filechooser.CurrentFolder);
+
+            }
+            filechooser.Destroy();
+
         }
         
 

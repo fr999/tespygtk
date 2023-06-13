@@ -170,6 +170,12 @@
     <property name="xpad">5</property>
     <property name="pixbuf">assets/1.png</property>
   </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="xpad">5</property>
+    <property name="pixbuf">assets/2.png</property>
+  </object>
   <object class="GtkImage" id="image21">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -194,6 +200,12 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="pixbuf">assets/done.png</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="xpad">5</property>
+    <property name="pixbuf">assets/3.png</property>
   </object>
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
@@ -541,8 +553,32 @@
               <object class="GtkMenuItem">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="label" translatable="yes">_View</property>
+                <property name="label" translatable="yes">_Unren</property>
                 <property name="use-underline">True</property>
+                <child type="submenu">
+                  <object class="GtkMenu">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkMenuItem" id="_btnrpa">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Extraire les fichiers .RPA</property>
+                        <property name="label" translatable="yes">Rpa</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="_btnunren">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="tooltip-text" translatable="yes">Extraire les fichiers .RPYC</property>
+                        <property name="label" translatable="yes">Unren</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
             </child>
             <child>
@@ -1315,6 +1351,7 @@
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
                                 <property name="hexpand">True</property>
+                                <property name="image">image2</property>
                                 <property name="always-show-image">True</property>
                               </object>
                               <packing>
@@ -1332,6 +1369,7 @@
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
                                 <property name="hexpand">True</property>
+                                <property name="image">image3</property>
                                 <property name="always-show-image">True</property>
                               </object>
                               <packing>

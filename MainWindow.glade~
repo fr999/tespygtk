@@ -170,6 +170,12 @@
     <property name="xpad">5</property>
     <property name="pixbuf">assets/1.png</property>
   </object>
+  <object class="GtkImage" id="image2">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="xpad">5</property>
+    <property name="pixbuf">assets/2.png</property>
+  </object>
   <object class="GtkImage" id="image21">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -194,6 +200,12 @@
     <property name="visible">True</property>
     <property name="can-focus">False</property>
     <property name="pixbuf">assets/done.png</property>
+  </object>
+  <object class="GtkImage" id="image3">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <property name="xpad">5</property>
+    <property name="pixbuf">assets/3.png</property>
   </object>
   <object class="GtkImage" id="image4">
     <property name="visible">True</property>
@@ -392,7 +404,7 @@
   </object>
   <object class="GtkWindow" id="MainWindow">
     <property name="can-focus">False</property>
-    <property name="title" translatable="yes">Example Window</property>
+    <property name="title" translatable="yes">TestPyRenpy</property>
     <property name="default-width">1080</property>
     <property name="default-height">720</property>
     <child>
@@ -1315,6 +1327,7 @@
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
                                 <property name="hexpand">True</property>
+                                <property name="image">image2</property>
                                 <property name="always-show-image">True</property>
                               </object>
                               <packing>
@@ -1332,6 +1345,7 @@
                                 <property name="halign">center</property>
                                 <property name="valign">center</property>
                                 <property name="hexpand">True</property>
+                                <property name="image">image3</property>
                                 <property name="always-show-image">True</property>
                               </object>
                               <packing>

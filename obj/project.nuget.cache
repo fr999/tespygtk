@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "dgSpecHash": "c5g9mTx/1yrwR9hL8RyGvTo51Hs9VgjwxslFqO6mrUHE6S5W/Vu2gSVCitxjmDVNCNMRBIbL4wUiV/BNtbKNLg==",
+  "success": true,
+  "projectFilePath": "/home/lordvenom57/Downloads/tespygtk/tespygtk.csproj",
+  "expectedPackageFiles": [
+    "/home/lordvenom57/.nuget/packages/atksharp/3.24.24.95/atksharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/cairosharp/3.24.24.95/cairosharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/gdksharp/3.24.24.95/gdksharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/giosharp/3.24.24.95/giosharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/glibsharp/3.24.24.95/glibsharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/gtksharp/3.24.24.95/gtksharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/pangosharp/3.24.24.95/pangosharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/microsoft.netcore.app.runtime.win-x64/7.0.5/microsoft.netcore.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/7.0.5/microsoft.aspnetcore.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/microsoft.netcore.app.host.win-x64/7.0.5/microsoft.netcore.app.host.win-x64.7.0.5.nupkg.sha512"
+  ],
+  "logs": []
+}

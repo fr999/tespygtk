@@ -12,7 +12,7 @@ namespace tespygtk
             ApplyTheme();
 
 
-            var app = new Application("org.tespygtk.tespygtk", GLib.ApplicationFlags.None);
+            var app = new Application("org.tespygtk", GLib.ApplicationFlags.None);
             app.Register(GLib.Cancellable.Current);
 
             var win = new MainWindow();

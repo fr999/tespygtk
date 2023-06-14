@@ -274,6 +274,7 @@ namespace tespygtk
 
         private void OnActionSelect(object sender, EventArgs a)
         {
+            try {
             var names = Lookup();
 
             TextIter start, end;
@@ -285,6 +286,9 @@ namespace tespygtk
             else 
             {
             _entryselect.Text = "0";
+            }
+            } catch {
+                return;
             }
     
 //            _entryselect
@@ -1014,7 +1018,7 @@ namespace tespygtk
                     string lenght = Util.GetFileSize(file);
 
                     
-                    System.IO.File.Move(file, targetPath);
+                    //System.IO.File.Move(file, targetPath);
                     //Console.WriteLine(length);
                     //store.AppendValues(fileName, lenght, file);
 

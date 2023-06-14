@@ -105,7 +105,7 @@ namespace tespygtk
 
                 //string lenght = Util.rpafile(file);
 
-                System.IO.File.Move(file, targetPath);
+                //System.IO.File.Move(file, targetPath);
                 //Console.WriteLine(length);
 
                     

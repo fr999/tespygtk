@@ -133,6 +133,12 @@ namespace tespygtk
 
         [UI] private ToggleButton _togglequote = null;
 
+        //button translate bar
+        [UI] private Button _btnbartranslate = null;
+        [UI] private ComboBox _combointranslate = null;
+        [UI] private ComboBox _comboouttranslate = null;
+        [UI] private ComboBox _combotranslate = null;
+
         private int _counter;
 
         Stack<string> undoStack;
@@ -194,6 +200,8 @@ namespace tespygtk
             _btnredo.Clicked += btnredo_Clicked;
 
             _btnerror.Clicked += btnerror_Cliked;
+
+            _btnbartranslate.Clicked += btnbartranslate_Clicked;
 
             //_textviewsource.Buffer.InsertText += textviewsource_Changed;
 
@@ -292,6 +300,24 @@ namespace tespygtk
             }
     
 //            _entryselect
+        }
+
+        private void btnbartranslate_Clicked(object sender, EventArgs a)
+        {
+            TreeIter news, newsin, newsout;
+
+            //var TreeModel = _comboouttranslate.Model;
+            _combotranslate.GetActiveIter(out news);
+            String translate = (String) _combotranslate.Model.GetValue (news, 0);
+
+            _combointranslate.GetActiveIter(out newsin);
+            String intranslate = (String) _combointranslate.Model.GetValue (newsin, 0);
+
+            _comboouttranslate.GetActiveIter(out newsout);
+            String outtranslate = (String) _comboouttranslate.Model.GetValue (newsout, 0);
+
+
+            Console.WriteLine(string.Format("traduction {0}, in {1} out {2}", translate, intranslate, outtranslate));
         }
 
 
@@ -655,8 +681,6 @@ namespace tespygtk
             var children = _listerror.Children;           
             foreach (Gtk.Widget element in children)
                 _listerror.Remove(element);
-
-            int combo = _combosearch.Active;            
             //string text = _searchentry.Text;
             
             string text = @"{(.+?)}";

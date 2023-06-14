@@ -79,6 +79,19 @@
           "build/GtkSharp.targets": {}
         }
       },
+      "GTranslate/2.1.6": {
+        "type": "package",
+        "compile": {
+          "lib/net6.0/GTranslate.dll": {
+            "related": ".xml"
+          }
+        },
+        "runtime": {
+          "lib/net6.0/GTranslate.dll": {
+            "related": ".xml"
+          }
+        }
+      },
       "PangoSharp/3.24.24.95": {
         "type": "package",
         "dependencies": {
@@ -174,6 +187,23 @@
         "lib/netstandard2.0/GtkSharp.dll"
       ]
     },
+    "GTranslate/2.1.6": {
+      "sha512": "2ejPoAQDOkd5T54D8T/thwX57KLj2fIi9jcGel8YdJnRu4Ek3eyaWUy/jPMiBu5pG1rXzJc8al+hHuU0LImrHQ==",
+      "type": "package",
+      "path": "gtranslate/2.1.6",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "gtranslate.2.1.6.nupkg.sha512",
+        "gtranslate.nuspec",
+        "lib/net6.0/GTranslate.dll",
+        "lib/net6.0/GTranslate.xml",
+        "lib/netstandard2.0/GTranslate.dll",
+        "lib/netstandard2.0/GTranslate.xml",
+        "lib/netstandard2.1/GTranslate.dll",
+        "lib/netstandard2.1/GTranslate.xml"
+      ]
+    },
     "PangoSharp/3.24.24.95": {
       "sha512": "H7JeyEvLsgvsbamGpRgoNtdvzPiGwwsUuoeTobN1C/JRjw1J8Snw0yf2WBr7CKx5GLwbrwpQYOb7N/HD17ME8A==",
       "type": "package",
@@ -190,6 +220,7 @@
   },
   "projectFileDependencyGroups": {
     "net7.0": [
+      "GTranslate >= 2.1.6",
       "GtkSharp >= 3.24.24.*"
     ]
   },
@@ -230,6 +261,10 @@
       "net7.0": {
         "targetAlias": "net7.0",
         "dependencies": {
+          "GTranslate": {
+            "target": "Package",
+            "version": "[2.1.6, )"
+          },
           "GtkSharp": {
             "target": "Package",
             "version": "[3.24.24.*, )"

@@ -1625,7 +1625,7 @@
                         <property name="spacing">6</property>
                         <property name="layout-style">end</property>
                         <child>
-                          <object class="GtkComboBox">
+                          <object class="GtkComboBox" id="_combointranslate">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Source</property>
@@ -1645,7 +1645,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkComboBox">
+                          <object class="GtkComboBox" id="_comboouttranslate">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Destination</property>
@@ -1665,7 +1665,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkComboBox">
+                          <object class="GtkComboBox" id="_combotranslate">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
                             <property name="tooltip-text" translatable="yes">Traducteur</property>

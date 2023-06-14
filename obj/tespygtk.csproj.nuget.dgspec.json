@@ -38,6 +38,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "GTranslate": {
+              "target": "Package",
+              "version": "[2.1.6, )"
+            },
             "GtkSharp": {
               "target": "Package",
               "version": "[3.24.24.*, )"

@@ -21,3 +21,4 @@
 /home/lordvenom57/Downloads/tespygtk/obj/Debug/net7.0/tespygtk.pdb
 /home/lordvenom57/Downloads/tespygtk/obj/Debug/net7.0/tespygtk.genruntimeconfig.cache
 /home/lordvenom57/Downloads/tespygtk/obj/Debug/net7.0/ref/tespygtk.dll
+/home/lordvenom57/Downloads/tespygtk/bin/Debug/net7.0/GTranslate.dll

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using GTranslate.Translators;
+using System.Threading.Tasks;
 using Gtk;
 
 namespace tespygtk
@@ -60,7 +61,75 @@ namespace tespygtk
     class Util
     {        
         //public static Dictionary<string, string> filedict = new Dictionary<string, string>();//this line is added.
-        
+
+
+        public static async Task<String> Translate(string service, string languagein, string languageout, string text)
+        {
+            //var translator = new AggregateTranslator();
+            //new GoogleTranslator();
+            //new GoogleTranslator2();
+            //new MicrosoftTranslator(); 
+            //new YandexTranslator();
+            //new BingTranslator();
+            if (languagein == "Auto") 
+            {
+                languagein = null;
+
+            }
+
+            try
+            {
+                switch (service)
+                {  
+                    case "Google":
+                        var translator = new GoogleTranslator();
+                        var aggrtext = await translator.TranslateAsync(text, languageout, languagein);
+                        Console.WriteLine($"Source Language: {aggrtext.SourceLanguage} target {aggrtext.TargetLanguage} service {aggrtext.Service}");
+                        return aggrtext.Translation;
+                    case "Google2":
+                        var translator2 = new GoogleTranslator2();
+                        var aggrtext2 = await translator2.TranslateAsync(text, languageout, languagein);
+                        Console.WriteLine($"Source Language: {aggrtext2.SourceLanguage} target {aggrtext2.TargetLanguage} service {aggrtext2.Service}");
+                        return aggrtext2.Translation;
+                    case "Yandex":
+                        var translator3 = new YandexTranslator();
+                        var aggrtext3 = await translator3.TranslateAsync(text, languageout, languagein);
+                        Console.WriteLine($"Source Language: {aggrtext3.SourceLanguage} target {aggrtext3.TargetLanguage} service {aggrtext3.Service}");
+                        return aggrtext3.Translation;
+                    case "Bing":
+                        var translator4 = new BingTranslator();
+                        var aggrtext4 = await translator4.TranslateAsync(text, languageout, languagein);
+                                                Console.WriteLine($"Source Language: {aggrtext4.SourceLanguage} target {aggrtext4.TargetLanguage} service {aggrtext4.Service}");
+
+                        return aggrtext4.Translation;
+                    case "Microsoft":
+                        var translator5 = new MicrosoftTranslator();
+                        var aggrtext5 = await translator5.TranslateAsync(text, languageout, languagein);
+                                                Console.WriteLine($"Source Language: {aggrtext5.SourceLanguage} target {aggrtext5.TargetLanguage} service {aggrtext5.Service}");
+
+                        return aggrtext5.Translation;            
+                    default:
+                        var translator6 = new AggregateTranslator();
+                        var aggrtext6 = await translator6.TranslateAsync(text, languageout, languagein);
+                                                Console.WriteLine($"Source Language: {aggrtext6.SourceLanguage} target {aggrtext6.TargetLanguage} service {aggrtext6.Service}");
+
+                        return aggrtext6.Translation;
+                } 
+            }
+            
+                //var aggrtext = await translator.TranslateAsync(text, languageout);
+                //Console.WriteLine($"Translation: {aggrtext.Translation}");
+                //Console.WriteLine($"Source Language: {aggrtext.SourceLanguage}");
+                //Console.WriteLine($"Target Language: {aggrtext.TargetLanguage}");
+                //Console.WriteLine($"Service: {aggrtext.Service}");
+                //return aggrtext.Translation;
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
+            
+        }
 
         public static Dictionary<string, string> getDictFile (string File)
         {

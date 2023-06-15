@@ -380,22 +380,13 @@
         <col id="0" translatable="yes">Google</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Deepl</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Libre</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">MyMemory</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Reverso</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">TranslateCom</col>
+        <col id="0" translatable="yes">Google2</col>
       </row>
       <row>
         <col id="0" translatable="yes">Yandex</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bing</col>
       </row>
       <row>
         <col id="0" translatable="yes">Microsoft</col>

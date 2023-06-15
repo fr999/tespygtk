@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+
 
 
 
@@ -302,7 +304,7 @@ namespace tespygtk
 //            _entryselect
         }
 
-        private void btnbartranslate_Clicked(object sender, EventArgs a)
+        private async void btnbartranslate_Clicked(object sender, EventArgs a)
         {
             TreeIter news, newsin, newsout;
 
@@ -315,11 +317,15 @@ namespace tespygtk
 
             _comboouttranslate.GetActiveIter(out newsout);
             String outtranslate = (String) _comboouttranslate.Model.GetValue (newsout, 0);
+            
+       
+            string result = await Util.Translate(translate,intranslate, outtranslate, "Hello");
 
+            Console.WriteLine(result);
+        
 
             Console.WriteLine(string.Format("traduction {0}, in {1} out {2}", translate, intranslate, outtranslate));
         }
-
 
         private void poperror_DeleteEvent(object sender, DeleteEventArgs a)
         {

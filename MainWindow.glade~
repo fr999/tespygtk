@@ -260,7 +260,7 @@
     <data>
       <row>
         <col id="0" translatable="yes">Allemand</col>
-        <col id="1" translatable="yes">ger</col>
+        <col id="1" translatable="yes">deu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Anglais</col>
@@ -272,7 +272,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Chinois</col>
-        <col id="1" translatable="yes">chi</col>
+        <col id="1" translatable="yes">zho-CN</col>
       </row>
       <row>
         <col id="0" translatable="yes">Coréen</col>
@@ -284,7 +284,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Français</col>
-        <col id="1" translatable="yes">fre</col>
+        <col id="1" translatable="yes">fra</col>
       </row>
       <row>
         <col id="0" translatable="yes">Indonésien</col>
@@ -322,7 +322,7 @@
     <data>
       <row>
         <col id="0" translatable="yes">Allemand</col>
-        <col id="1" translatable="yes">ger</col>
+        <col id="1" translatable="yes">deu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Anglais</col>
@@ -334,7 +334,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Chinois</col>
-        <col id="1" translatable="yes">chi</col>
+        <col id="1" translatable="yes">zho-CN</col>
       </row>
       <row>
         <col id="0" translatable="yes">Coréen</col>
@@ -346,7 +346,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Français</col>
-        <col id="1" translatable="yes">fre</col>
+        <col id="1" translatable="yes">fra</col>
       </row>
       <row>
         <col id="0" translatable="yes">Indonésien</col>
@@ -380,22 +380,13 @@
         <col id="0" translatable="yes">Google</col>
       </row>
       <row>
-        <col id="0" translatable="yes">Deepl</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Libre</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">MyMemory</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">Reverso</col>
-      </row>
-      <row>
-        <col id="0" translatable="yes">TranslateCom</col>
+        <col id="0" translatable="yes">Google2</col>
       </row>
       <row>
         <col id="0" translatable="yes">Yandex</col>
+      </row>
+      <row>
+        <col id="0" translatable="yes">Bing</col>
       </row>
       <row>
         <col id="0" translatable="yes">Microsoft</col>
@@ -1414,7 +1405,7 @@
                         <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkScrolledWindow">
+                          <object class="GtkScrolledWindow" id="_scrollsource">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="shadow-type">in</property>
@@ -1434,9 +1425,6 @@
                             <property name="fill">True</property>
                             <property name="position">1</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -1481,9 +1469,6 @@
                             <property name="position">0</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="position">2</property>
@@ -1526,9 +1511,6 @@
                             <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                       <packing>

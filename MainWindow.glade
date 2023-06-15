@@ -260,7 +260,7 @@
     <data>
       <row>
         <col id="0" translatable="yes">Allemand</col>
-        <col id="1" translatable="yes">ger</col>
+        <col id="1" translatable="yes">deu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Anglais</col>
@@ -272,7 +272,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Chinois</col>
-        <col id="1" translatable="yes">chi</col>
+        <col id="1" translatable="yes">zho-CN</col>
       </row>
       <row>
         <col id="0" translatable="yes">Coréen</col>
@@ -284,7 +284,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Français</col>
-        <col id="1" translatable="yes">fre</col>
+        <col id="1" translatable="yes">fra</col>
       </row>
       <row>
         <col id="0" translatable="yes">Indonésien</col>
@@ -322,7 +322,7 @@
     <data>
       <row>
         <col id="0" translatable="yes">Allemand</col>
-        <col id="1" translatable="yes">ger</col>
+        <col id="1" translatable="yes">deu</col>
       </row>
       <row>
         <col id="0" translatable="yes">Anglais</col>
@@ -334,7 +334,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Chinois</col>
-        <col id="1" translatable="yes">chi</col>
+        <col id="1" translatable="yes">zho-CN</col>
       </row>
       <row>
         <col id="0" translatable="yes">Coréen</col>
@@ -346,7 +346,7 @@
       </row>
       <row>
         <col id="0" translatable="yes">Français</col>
-        <col id="1" translatable="yes">fre</col>
+        <col id="1" translatable="yes">fra</col>
       </row>
       <row>
         <col id="0" translatable="yes">Indonésien</col>
@@ -1426,9 +1426,6 @@
                             <property name="position">1</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="position">1</property>
@@ -1472,9 +1469,6 @@
                             <property name="position">0</property>
                           </packing>
                         </child>
-                        <child>
-                          <placeholder/>
-                        </child>
                       </object>
                       <packing>
                         <property name="position">2</property>
@@ -1517,9 +1511,6 @@
                             <property name="fill">True</property>
                             <property name="position">0</property>
                           </packing>
-                        </child>
-                        <child>
-                          <placeholder/>
                         </child>
                       </object>
                       <packing>

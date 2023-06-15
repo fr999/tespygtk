@@ -307,24 +307,43 @@ namespace tespygtk
         private async void btnbartranslate_Clicked(object sender, EventArgs a)
         {
             TreeIter news, newsin, newsout;
+            TextIter start, end;
+
+            var names = Lookup();
+            var buffer = names.Item1.Buffer;
 
             //var TreeModel = _comboouttranslate.Model;
             _combotranslate.GetActiveIter(out news);
             String translate = (String) _combotranslate.Model.GetValue (news, 0);
 
             _combointranslate.GetActiveIter(out newsin);
-            String intranslate = (String) _combointranslate.Model.GetValue (newsin, 0);
+            String intranslate = (String) _combointranslate.Model.GetValue(newsin, 1);
+            //Console.WriteLine(intranslate);
 
             _comboouttranslate.GetActiveIter(out newsout);
-            String outtranslate = (String) _comboouttranslate.Model.GetValue (newsout, 0);
+            String outtranslate = (String) _comboouttranslate.Model.GetValue(newsout, 1);
+            //Console.WriteLine(outtranslate);
             
-       
-            string result = await Util.Translate(translate,intranslate, outtranslate, "Hello");
+            string result = string.Empty;
 
-            Console.WriteLine(result);
-        
-
-            Console.WriteLine(string.Format("traduction {0}, in {1} out {2}", translate, intranslate, outtranslate));
+            if (buffer.GetSelectionBounds(out start, out end))
+            {
+                string text = buffer.GetText(start, end, true);
+                result = await Util.Translate(translate, intranslate, outtranslate, text);
+            
+                if (result != string.Empty)
+                {
+                buffer.DeleteSelection(true, true);
+                buffer.InsertAtCursor(result);
+                //buffer.PlaceCursor(end);
+                }
+                else
+                {
+                    return;
+                }
+            
+            }
+            //Console.WriteLine(result);
         }
 
         private void poperror_DeleteEvent(object sender, DeleteEventArgs a)

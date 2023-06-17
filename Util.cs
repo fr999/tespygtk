@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using GTranslate.Translators;
 using System.Threading.Tasks;
 using Gtk;
+
 
 namespace tespygtk
 {
@@ -18,6 +22,83 @@ namespace tespygtk
             Start = _start;
             End = _end;
         }
+    }
+
+       public class UnRen
+    {
+        public string Path {get;set;}
+        public TextIter Start {get;set;}
+        public TextIter End {get; set;}
+        public string pythonLocations {get; set;}
+        public UnRen(string _path)
+        {
+            string path = GetPythonPath(_path);
+            //string targetPath = System.IO.Path.Combine(_path, "lib/py2-linux-x86_64/python");
+            ProcessStartInfo start = new ProcessStartInfo();
+            start.FileName = path;
+            //Console.WriteLine(targetPath);
+            start.Arguments = string.Format("{0} {1}", "--version", "");
+            start.UseShellExecute = false;
+            start.RedirectStandardOutput = true;
+            using(Process process = Process.Start(start))
+            {
+            using(StreamReader reader = process.StandardOutput)
+            {
+             string result = reader.ReadToEnd();
+             Console.Write(result);
+            }
+     }
+
+        }
+
+        private string GetPythonPath(string path) {
+            
+            string archi = string.Empty;
+
+            if (IntPtr.Size == 4)
+            {
+                archi = "i686";
+            }
+            else 
+            {
+                archi = "x86";
+            }
+            string os = string.Empty;
+            string python = string.Empty;
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                os = "windows";
+                python = "python.exe";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            os = "linux";
+            python = "python";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            Console.WriteLine("MacOS");
+            os = "macos";
+            //????// 
+            python = "python";
+            }
+
+            string[] allFiles = Directory.GetDirectories(path+ "/lib/", "*"+os+"**"+archi+"*");
+            foreach(string file in allFiles)
+            {
+                string targetPath = System.IO.Path.Combine(file, python);
+                if (File.Exists(targetPath))
+                {
+                Console.WriteLine(targetPath);
+                return targetPath;
+                }
+                else
+                {
+                    Console.WriteLine("pas passss");
+                    return string.Empty;
+                }
+                
+            }
+            return string.Empty;
+        }
+
     }
 
     public class Edit

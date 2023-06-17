@@ -1018,7 +1018,9 @@ namespace tespygtk
 
             if (filechooser.Run() == (int)ResponseType.Accept) 
             {
-                Util.Rpa(filechooser.CurrentFolder);
+                //Util.Rpa(filechooser.CurrentFolder);
+                UnRen test = new UnRen(filechooser.CurrentFolder);
+
 
             }
             filechooser.Destroy();

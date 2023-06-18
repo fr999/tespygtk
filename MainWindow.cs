@@ -1015,15 +1015,32 @@ namespace tespygtk
             FileChooserAction.SelectFolder,
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
+            
+            List<string> listerror = null;
+            string folder = string.Empty;
 
-            if (filechooser.Run() == (int)ResponseType.Accept) 
+            if (dialog == ResponseType.Accept) 
             {
-                //Util.Rpa(filechooser.CurrentFolder);
-                UnRen test = new UnRen(filechooser.CurrentFolder);
-
-
+                folder = filechooser.CurrentFolder;
             }
             filechooser.Destroy();
+
+
+            if (folder != string.Empty)
+            {
+                _progress.Fraction = 0.5;
+                UnRen test = new UnRen(folder);
+                listerror = test.list;
+            }
+
+            MessageDialog md = new MessageDialog (this, 
+            DialogFlags.DestroyWithParent, MessageType.Warning, 
+            ButtonsType.OkCancel, string.Join("\t", listerror));
+            //md.Run();
+            Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+            md.Destroy();
 
         }
         

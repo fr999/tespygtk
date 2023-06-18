@@ -27,17 +27,40 @@ namespace tespygtk
        public class UnRen
     {
         public string Path {get;set;}
-        public TextIter Start {get;set;}
+        public String[] msg {get;set;}
+
+        public List<string> list = new List<string>();
         public TextIter End {get; set;}
         public string pythonLocations {get; set;}
+        
+   
         public UnRen(string _path)
         {
+
+            string newunren = System.IO.Path.Combine(_path, "unren_rpa.rpy");
+            try 
+            {
+                File.Copy("py/unren_rpa.rpy", newunren);
+            }
+              catch (IOException ex)
+            {
+                list.Add($"IOException: {ex.Message}");
+                //Console.WriteLine("IOException:\r\n\r\n" + ex.Message);
+            }
+
             string path = GetPythonPath(_path);
+            if (path == string.Empty) 
+            {
+                list.Add($"IOException: Impossible de trouver Python");
+                return;
+            }
             //string targetPath = System.IO.Path.Combine(_path, "lib/py2-linux-x86_64/python");
+            
+            string arg = string.Format("{0} {1}", newunren, _path);            
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = path;
             //Console.WriteLine(targetPath);
-            start.Arguments = string.Format("{0} {1}", "--version", "");
+            start.Arguments = arg;
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             using(Process process = Process.Start(start))
@@ -45,9 +68,10 @@ namespace tespygtk
             using(StreamReader reader = process.StandardOutput)
             {
              string result = reader.ReadToEnd();
-             Console.Write(result);
+             list.Add(result);
+             //Console.Write(result);
             }
-     }
+            }
 
         }
 

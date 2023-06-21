@@ -24,56 +24,126 @@ namespace tespygtk
         }
     }
 
-       public class UnRen
+       public class UnRen2
     {
-        public string Path {get;set;}
-        public String[] msg {get;set;}
-
+        string Path;
         public List<string> list = new List<string>();
-        public TextIter End {get; set;}
         public string pythonLocations {get; set;}
-        
-   
-        public UnRen(string _path)
-        {
+        public string pythonArg {get; set;}
 
-            string newunren = System.IO.Path.Combine(_path, "unren_rpa.rpy");
+        private Dialog Dialog = null;
+
+        private TextView Text = null;
+
+        private ProgressBar Bar = null;
+        
+        public UnRen2(string _path, Dialog _dialog, TextView _text, ProgressBar _bar)
+        {
+            this.Path = _path;
+            this.Dialog = _dialog;
+            this.Text = _text;
+            this.Bar = _bar;
+            Dialog.DeleteEvent += dialog_DeleteEvent;
+        }
+
+        private void dialog_DeleteEvent(object sender, DeleteEventArgs a)
+        {
+            Dialog.Destroy();
+        }
+   
+        public void UnRen()
+        {
+            Console.WriteLine("passss");
+            //popup.Modal = false;
+            Dialog.ShowAll();
+            //popup.Run();
+            
+    //Thread.Sleep(100); // CPU-bound work
+            string newunren = System.IO.Path.Combine(this.Path, "unren_rpa.rpy");
             try 
             {
                 File.Copy("py/unren_rpa.rpy", newunren);
             }
               catch (IOException ex)
             {
-                list.Add($"IOException: {ex.Message}");
-                //Console.WriteLine("IOException:\r\n\r\n" + ex.Message);
+                Text.Buffer.Text = $"IOException: {ex.Message}";
+                return;
             }
 
-            string path = GetPythonPath(_path);
-            if (path == string.Empty) 
+            pythonLocations = GetPythonPath(this.Path);
+            if (pythonLocations == string.Empty) 
             {
-                list.Add($"IOException: Impossible de trouver Python");
+                //list.Add($"IOException: Impossible de trouver Python");
+                Text.Buffer.Text = $"IOException: Impossible de trouver Python\n{this.Path}";
+                //File.Delete(newunren);
                 return;
             }
             //string targetPath = System.IO.Path.Combine(_path, "lib/py2-linux-x86_64/python");
             
-            string arg = string.Format("{0} {1}", newunren, _path);            
+            pythonArg = string.Format("{0} {1}", newunren, this.Path);
+
+            
+            Task.Run(() => Connection()).ContinueWith(t => { 
+            Text.Buffer.Text = string.Join("\t", list);
+            File.Delete(newunren);
+            }); 
+            //Task.Run(() => Connection());
+            //Text.Buffer.Text = string.Join("\t", list);
+            
+        }
+
+        public void Connection()
+        {
             ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = path;
+            start.FileName = this.pythonLocations;
             //Console.WriteLine(targetPath);
-            start.Arguments = arg;
+            start.Arguments = this.pythonArg;
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
-            using(Process process = Process.Start(start))
+            start.RedirectStandardError = true;
+
+            try
             {
-            using(StreamReader reader = process.StandardOutput)
+            Process process = Process.Start(start);
+            bool inProcess = true;
+            Text.Buffer.Text = "Patience...";
+            Bar.Fraction = 0.0;
+            while(inProcess)
             {
-             string result = reader.ReadToEnd();
-             list.Add(result);
-             //Console.Write(result);
-            }
+                
+                if (Bar.Fraction >= 1.0)
+                {
+                    Bar.Fraction = 0.0;
+                }
+                else
+                {
+                    Bar.Fraction += 0.1;
+                    System.Threading.Thread.Sleep(200);
+
+                }
+
+                if (process.HasExited)
+                {
+                    Bar.Fraction = 0.0;
+                    inProcess = false;
+                }
             }
 
+            string stderr = process.StandardError.ReadToEnd();
+            string stresult = process.StandardOutput.ReadToEnd();
+            //Console.WriteLine(stresult);
+            list.Add(stresult);
+            list.Add(stderr);
+            //Text.Buffer.Text = "";
+            //Text.Buffer.Text = stresult;
+            }
+            catch (Exception e)
+            {
+                list.Add(e.Message);
+
+            }
         }
+
 
         private string GetPythonPath(string path) {
             

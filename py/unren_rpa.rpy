@@ -6,6 +6,7 @@ sys.path.append('..')
 import renpy.object
 import renpy.config
 import renpy.loader
+
 try:
     import renpy.util
 except:
@@ -44,7 +45,6 @@ class RenPyArchive:
     # Load archive.
     def load(self, filename, index):
         self.file = "game/"+filename
-        print (filename)
         self.files = {}
         self.indexes = {}
         self.handle = open(self.file, 'rb')
@@ -69,6 +69,7 @@ if __name__ == "__main__":
     parser.add_argument('dir',type=str, help='The Ren\'py dir to operate on.')
     arguments = parser.parse_args()
     directory = arguments.dir
+    os.chdir(directory)
     remove = arguments.remove
     output = 'game'
     archive_extentions = []
@@ -89,12 +90,11 @@ if __name__ == "__main__":
                 pass
     if archives != []:
         for arch in archives:
-            print("  Unpacking \"{0}\" acrhive.".format(arch))
+            print("  Unpacking \"{0}\" archive.".format(arch))
             # try:
             archive = RenPyArchive(arch, archives.index(arch))
 
             files = archive.list()
-            print(files)
 
             # Create output directory if not present.
             if not os.path.exists(output):

@@ -4,7 +4,7 @@ using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-
+using System.Threading;
 
 
 
@@ -39,6 +39,11 @@ namespace tespygtk
         public static Dictionary<string, string> filedict = null;
 
         [UI] private Dialog _poperror = null;
+
+        [UI] private Dialog _popupprocess = null;
+
+        [UI] private TextView _processtext = null;
+        [UI] private ProgressBar _processbar = null;
 
         [UI] private ListBox _listerror = null;
         [UI] private Button _btnopenfolder = null;
@@ -275,7 +280,6 @@ namespace tespygtk
         //_btnfont.FontSet  += new System.EventHandler(this.OnFontbutton1FontSet);          
 
         }
-
 
         private void Window_DeleteEvent(object sender, DeleteEventArgs a)
         {
@@ -1018,29 +1022,34 @@ namespace tespygtk
             //filechooser.Run();
             Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
             
-            List<string> listerror = null;
             string folder = string.Empty;
 
             if (dialog == ResponseType.Accept) 
             {
                 folder = filechooser.CurrentFolder;
             }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
             filechooser.Destroy();
 
 
             if (folder != string.Empty)
             {
-                _progress.Fraction = 0.5;
-                UnRen test = new UnRen(folder);
-                listerror = test.list;
-            }
 
-            MessageDialog md = new MessageDialog (this, 
-            DialogFlags.DestroyWithParent, MessageType.Warning, 
-            ButtonsType.OkCancel, string.Join("\t", listerror));
-            //md.Run();
-            Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
-            md.Destroy();
+                _progress.Fraction = 0;
+                UnRen2 test = new UnRen2(folder, _popupprocess, _processtext, _processbar);
+                //Thread t = new Thread(new ThreadStart(test.UnRen));
+                //test.UnRen();            
+                test.UnRen();
+
+                //Task task = test.UnRen();
+                //await Task.Run(() => test.UnRen()).ContinueWith(t => taskend = false);                        
+                
+                //listerror = test.list;
+            }
 
         }
         

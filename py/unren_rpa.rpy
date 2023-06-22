@@ -78,7 +78,8 @@ if __name__ == "__main__":
             for ext in handler.get_supported_extensions():
                 if ext not in archive_extentions:
                     archive_extentions.append(ext)
-    else: archive_extentions.append('.rpa')
+    else: 
+        archive_extentions.append('.rpa')
     archives = []
     for root, dirs, files in os.walk(directory):
         for file in files:

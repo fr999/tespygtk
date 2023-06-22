@@ -50,7 +50,7 @@ namespace tespygtk
 
         [UI] private MenuItem _btnrpa = null;
 
-        [UI] private MenuItem _btnunren = null;
+        [UI] private MenuItem _btnrpyc = null;
 
         [UI] private Button _btnextract = null;
 
@@ -194,7 +194,8 @@ namespace tespygtk
             _btntranslate.Clicked += btntranslate_Clicked;
             _btncompile.Clicked += btncompile_Clicked;
 
-            _btnrpa.Activated += _btnrpa_Clicked;
+            _btnrpa.Activated += btnrpa_Clicked;
+            _btnrpyc.Activated += btnrpyc_Clicked;
 
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
@@ -697,8 +698,6 @@ namespace tespygtk
     
             var names = Lookup();
             
-            TextIter startiter, enditer;
-
             TextBuffer buffer = names.Item1.Buffer;
 
             TextIter start = buffer.StartIter;
@@ -1013,7 +1012,7 @@ namespace tespygtk
             
         }
 
-        private void _btnrpa_Clicked(object sender, EventArgs a)
+        private void btnrpa_Clicked(object sender, EventArgs a)
         {
             Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
             FileChooserAction.SelectFolder,
@@ -1044,6 +1043,46 @@ namespace tespygtk
                 //Thread t = new Thread(new ThreadStart(test.UnRen));
                 //test.UnRen();            
                 test.UnRen();
+
+                //Task task = test.UnRen();
+                //await Task.Run(() => test.UnRen()).ContinueWith(t => taskend = false);                        
+                
+                //listerror = test.list;
+            }
+
+        }
+
+      private void btnrpyc_Clicked(object sender, EventArgs a)
+        {
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
+            FileChooserAction.SelectFolder,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
+            
+            string folder = string.Empty;
+
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.CurrentFolder;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+
+
+            if (folder != string.Empty)
+            {
+
+                _progress.Fraction = 0;
+                UnRpyc test = new UnRpyc(folder);
+                //Thread t = new Thread(new ThreadStart(test.UnRen));
+                //test.UnRen();            
+                //test.UnRen();
 
                 //Task task = test.UnRen();
                 //await Task.Run(() => test.UnRen()).ContinueWith(t => taskend = false);                        

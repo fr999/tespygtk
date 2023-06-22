@@ -45,6 +45,10 @@
             "GtkSharp": {
               "target": "Package",
               "version": "[3.24.24.*, )"
+            },
+            "SharpZipLib": {
+              "target": "Package",
+              "version": "[1.4.1, )"
             }
           },
           "imports": [

@@ -635,11 +635,11 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="_btnunren">
+                      <object class="GtkMenuItem" id="_btnrpyc">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Extraire les fichiers .RPYC</property>
-                        <property name="label" translatable="yes">Unren</property>
+                        <property name="label" translatable="yes">Rpyc</property>
                         <property name="use-underline">True</property>
                       </object>
                     </child>

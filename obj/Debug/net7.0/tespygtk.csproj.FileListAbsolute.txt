@@ -22,3 +22,4 @@
 /home/lordvenom57/Downloads/tespygtk/obj/Debug/net7.0/tespygtk.genruntimeconfig.cache
 /home/lordvenom57/Downloads/tespygtk/obj/Debug/net7.0/ref/tespygtk.dll
 /home/lordvenom57/Downloads/tespygtk/bin/Debug/net7.0/GTranslate.dll
+/home/lordvenom57/Downloads/tespygtk/bin/Debug/net7.0/ICSharpCode.SharpZipLib.dll

@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +8,9 @@ using System.Text.RegularExpressions;
 using GTranslate.Translators;
 using System.Threading.Tasks;
 using Gtk;
+
+using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+
 
 
 namespace tespygtk
@@ -24,9 +28,102 @@ namespace tespygtk
         }
     }
 
+    public class Zlib
+    {
+        /// <summary>
+        /// 解压
+        /// </summary>
+        /// <param name="data">压缩数据</param>
+        /// <returns></returns>
+        public static byte[] Decompress(byte[] data)
+        {
+            MemoryStream compressed = new(data);
+            MemoryStream decompressed = new();
+            InflaterInputStream zlibInput = new(compressed);
+            zlibInput.CopyTo(decompressed);
+            return decompressed.ToArray();
+        }
+    }
+
+    public class UnRpyc
+    {
+        public static string RPYCSignature => "RENPY RPC2";
+        public UnRpyc(string path)
+        {
+            DirectoryInfo dirPathInfo = new(path);
+            FileInfo[] rpycFileInfos = dirPathInfo.GetFiles("*.rpyc", SearchOption.AllDirectories);
+            foreach (FileInfo rpycFileInfo in rpycFileInfos)
+            {
+                UnRpycs(rpycFileInfo.FullName);
+                Console.WriteLine(rpycFileInfo.FullName);
+            }
+        }
+
+        public static void UnRpycs(string path)
+        {
+            using FileStream rpycFS = File.OpenRead(path);
+            using BinaryReader rpycBR = new(rpycFS);
+
+            Span<byte> keys = stackalloc byte[4];
+
+            rpycFS.Seek(48, SeekOrigin.Begin);
+            rpycBR.Read(keys);
+
+            string scriptName = Path.GetFileNameWithoutExtension(path);
+            string extractPath = Path.GetDirectoryName(path) + "\\ScriptExtract\\" + scriptName + "\\";
+
+            //检查文件夹
+            if (Directory.Exists(extractPath) == false)
+            {
+                Directory.CreateDirectory(extractPath);
+            }
+
+
+            rpycFS.Seek(RPYCSignature.Length, SeekOrigin.Begin);
+
+            long tablePosition = rpycFS.Position;
+
+            int slot, start, length;
+
+            while (true)
+            {
+                //读表
+                slot = rpycBR.ReadInt32();
+                start = rpycBR.ReadInt32();
+                length = rpycBR.ReadInt32();
+
+                tablePosition = rpycFS.Position;    //保存当前表位置
+
+                //读取完毕
+                if (slot == 0)
+                {
+                    break;
+                }
+
+                //解密信息
+                start = start ^ keys[0] ^ keys[3];
+                length = length ^ keys[1] ^ keys[2];
+
+                //读取封包
+                byte[] compressedData = ArrayPool<byte>.Shared.Rent(length);
+                rpycFS.Seek(start, SeekOrigin.Begin);
+                rpycBR.Read(compressedData, 0, length);
+
+                //解压导出                 
+                byte[] rawData = Zlib.Decompress(compressedData);
+                File.WriteAllBytes(extractPath + slot.ToString() + ".bin", rawData);
+
+                ArrayPool<byte>.Shared.Return(compressedData);  //释放
+                rpycFS.Seek(tablePosition, SeekOrigin.Begin);   //回到下一个表的起始点
+            }
+
+        }
+    }
+
        public class UnRen2
     {
         string Path;
+        string unren_rpa;
         public List<string> list = new List<string>();
         public string pythonLocations {get; set;}
         public string pythonArg {get; set;}
@@ -44,14 +141,16 @@ namespace tespygtk
             this.Text = _text;
             this.Bar = _bar;
             Dialog.DeleteEvent += dialog_DeleteEvent;
+            Text.Buffer.Text = "";
         }
 
         private void dialog_DeleteEvent(object sender, DeleteEventArgs a)
         {
-            Dialog.Destroy();
+            Dialog.Hide();
+            a.RetVal = true;
         }
    
-        public void UnRen()
+        public async void UnRen()
         {
             Console.WriteLine("passss");
             //popup.Modal = false;
@@ -59,14 +158,15 @@ namespace tespygtk
             //popup.Run();
             
     //Thread.Sleep(100); // CPU-bound work
-            string newunren = System.IO.Path.Combine(this.Path, "unren_rpa.rpy");
+            unren_rpa = System.IO.Path.Combine(this.Path, "unren_rpa.rpy");
             try 
             {
-                File.Copy("py/unren_rpa.rpy", newunren);
+                File.Copy("py/unren_rpa.rpy", unren_rpa);
             }
               catch (IOException ex)
             {
-                Text.Buffer.Text = $"IOException: {ex.Message}";
+                Text.Buffer.Text = $"IOException: {ex.Message}\t\nFichier Supprimée";
+                File.Delete(unren_rpa);
                 return;
             }
 
@@ -75,29 +175,33 @@ namespace tespygtk
             {
                 //list.Add($"IOException: Impossible de trouver Python");
                 Text.Buffer.Text = $"IOException: Impossible de trouver Python\n{this.Path}";
-                //File.Delete(newunren);
+                File.Delete(unren_rpa);
                 return;
-            }
-            //string targetPath = System.IO.Path.Combine(_path, "lib/py2-linux-x86_64/python");
-            
-            pythonArg = string.Format("{0} {1}", newunren, this.Path);
+            }            
+            //pythonArg = string.Format("{0} {1}", unren_rpa, this.Path);
 
             
-            Task.Run(() => Connection()).ContinueWith(t => { 
-            Text.Buffer.Text = string.Join("\t", list);
-            File.Delete(newunren);
-            }); 
-            //Task.Run(() => Connection());
+            //Task.Run(() => Connection()).ContinueWith(t => { 
+            //Text.Buffer.Text = "";
             //Text.Buffer.Text = string.Join("\t", list);
+            //Console.WriteLine(string.Join("\t", list));
+            //File.Delete(unren_rpa);
+            //}); 
+            await Task.Run(() => Connection());
+            Text.Buffer.Text = "";
+            Text.Buffer.Text = string.Join("\t", list);
+            File.Delete(unren_rpa);
             
         }
 
         public void Connection()
         {
-            ProcessStartInfo start = new ProcessStartInfo();
+            ProcessStartInfo start = new ProcessStartInfo(){
+                ArgumentList = {unren_rpa, this.Path}
+            };
             start.FileName = this.pythonLocations;
             //Console.WriteLine(targetPath);
-            start.Arguments = this.pythonArg;
+            //start.Arguments = this.pythonArg;
             start.UseShellExecute = false;
             start.RedirectStandardOutput = true;
             start.RedirectStandardError = true;
@@ -180,12 +284,10 @@ namespace tespygtk
                 string targetPath = System.IO.Path.Combine(file, python);
                 if (File.Exists(targetPath))
                 {
-                Console.WriteLine(targetPath);
                 return targetPath;
                 }
                 else
                 {
-                    Console.WriteLine("pas passss");
                     return string.Empty;
                 }
                 

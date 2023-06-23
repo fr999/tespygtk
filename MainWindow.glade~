@@ -616,35 +616,12 @@
               </object>
             </child>
             <child>
-              <object class="GtkMenuItem">
+              <object class="GtkMenuItem" id="_btnrpa">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
+                <property name="tooltip-text" translatable="yes">Ouvrir UnRen</property>
                 <property name="label" translatable="yes">_Unren</property>
                 <property name="use-underline">True</property>
-                <child type="submenu">
-                  <object class="GtkMenu">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <child>
-                      <object class="GtkMenuItem" id="_btnrpa">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">Extraire les fichiers .RPA</property>
-                        <property name="label" translatable="yes">Rpa</property>
-                        <property name="use-underline">True</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkMenuItem" id="_btnrpyc">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">Extraire les fichiers .RPYC</property>
-                        <property name="label" translatable="yes">Rpyc</property>
-                        <property name="use-underline">True</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
               </object>
             </child>
             <child>

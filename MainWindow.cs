@@ -50,8 +50,6 @@ namespace tespygtk
 
         [UI] private MenuItem _btnrpa = null;
 
-        [UI] private MenuItem _btnrpyc = null;
-
         [UI] private Button _btnextract = null;
 
         [UI] private Button _btntranslate = null;
@@ -195,7 +193,6 @@ namespace tespygtk
             _btncompile.Clicked += btncompile_Clicked;
 
             _btnrpa.Activated += btnrpa_Clicked;
-            _btnrpyc.Activated += btnrpyc_Clicked;
 
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
@@ -1037,9 +1034,14 @@ namespace tespygtk
 
             if (folder != string.Empty)
             {
+                MessageDialog md = new MessageDialog (this, 
+                DialogFlags.DestroyWithParent, MessageType.Warning, 
+                ButtonsType.Ok, "");
+                //Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                //md.Destroy();
 
                 _progress.Fraction = 0;
-                UnRen2 test = new UnRen2(folder, _popupprocess, _processtext, _processbar);
+                UnRen2 test = new UnRen2(folder, md, _progress);
                 //Thread t = new Thread(new ThreadStart(test.UnRen));
                 //test.UnRen();            
                 test.UnRen();

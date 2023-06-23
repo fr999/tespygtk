@@ -30,6 +30,8 @@ namespace tespygtk
 
     public class Zlib
     {
+
+        
         /// <summary>
         /// 解压
         /// </summary>
@@ -109,7 +111,7 @@ namespace tespygtk
                 rpycFS.Seek(start, SeekOrigin.Begin);
                 rpycBR.Read(compressedData, 0, length);
 
-                //解压导出                 
+                //解压导出 
                 byte[] rawData = Zlib.Decompress(compressedData);
                 File.WriteAllBytes(extractPath + slot.ToString() + ".bin", rawData);
 
@@ -123,61 +125,67 @@ namespace tespygtk
        public class UnRen2
     {
         string Path;
-        string unren_rpa;
+        string unren_copy;
+
+        string unren_name;
+
+        string process_name;
+
+        string message;
         public List<string> list = new List<string>();
         public string pythonLocations {get; set;}
         public string pythonArg {get; set;}
 
-        private Dialog Dialog = null;
-
-        private TextView Text = null;
-
+        private MessageDialog Dialog = null;
         private ProgressBar Bar = null;
         
-        public UnRen2(string _path, Dialog _dialog, TextView _text, ProgressBar _bar)
+        public UnRen2(string _path, MessageDialog _dialog, ProgressBar _bar)
         {
             this.Path = _path;
             this.Dialog = _dialog;
-            this.Text = _text;
             this.Bar = _bar;
-            Dialog.DeleteEvent += dialog_DeleteEvent;
-            Text.Buffer.Text = "";
-        }
 
-        private void dialog_DeleteEvent(object sender, DeleteEventArgs a)
-        {
-            Dialog.Hide();
-            a.RetVal = true;
-        }
-   
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                unren_name = "unren.bat";
+                process_name = "cmd";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            unren_name = "unren.command";
+            process_name = "/bin/bash";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            Console.WriteLine("MacOS");
+            unren_name = "unren.command";
+            //????// 
+            process_name = "/bin/bash";
+            }
+        }   
         public async void UnRen()
         {
-            Console.WriteLine("passss");
-            //popup.Modal = false;
-            Dialog.ShowAll();
-            //popup.Run();
             
-    //Thread.Sleep(100); // CPU-bound work
-            unren_rpa = System.IO.Path.Combine(this.Path, "unren_rpa.rpy");
+            unren_copy = System.IO.Path.Combine(this.Path, unren_name);
             try 
             {
-                File.Copy("py/unren_rpa.rpy", unren_rpa);
+                //File.Copy("py/unren_rpa.rpy", unren_rpa);
+                File.Copy($"py/{unren_name}", unren_copy);
             }
               catch (IOException ex)
             {
-                Text.Buffer.Text = $"IOException: {ex.Message}\t\nFichier Supprimée";
-                File.Delete(unren_rpa);
+                Dialog.Text = $"IOException: {ex.Message}\t\nFichier Supprimée";
+                File.Delete(unren_copy);
+                Dialog.Run();
+                Dialog.Destroy();
                 return;
             }
 
-            pythonLocations = GetPythonPath(this.Path);
-            if (pythonLocations == string.Empty) 
-            {
+            //pythonLocations = GetPythonPath(this.Path);
+            //if (pythonLocations == string.Empty) 
+            //{
                 //list.Add($"IOException: Impossible de trouver Python");
-                Text.Buffer.Text = $"IOException: Impossible de trouver Python\n{this.Path}";
-                File.Delete(unren_rpa);
-                return;
-            }            
+               // Text.Buffer.Text = $"IOException: Impossible de trouver Python\n{this.Path}";
+                //File.Delete(unren_rpa);
+               // return;
+            //}            
             //pythonArg = string.Format("{0} {1}", unren_rpa, this.Path);
 
             
@@ -187,30 +195,35 @@ namespace tespygtk
             //Console.WriteLine(string.Join("\t", list));
             //File.Delete(unren_rpa);
             //}); 
-            await Task.Run(() => Connection());
-            Text.Buffer.Text = "";
-            Text.Buffer.Text = string.Join("\t", list);
-            File.Delete(unren_rpa);
-            
+           
+            var result = await Task.Run(() => Connection());
+            Dialog.Text = message;
+            Dialog.Run();
+            Dialog.Destroy(); 
+            File.Delete(unren_copy);           
         }
 
-        public void Connection()
+        public bool Connection()
         {
-            ProcessStartInfo start = new ProcessStartInfo(){
-                ArgumentList = {unren_rpa, this.Path}
+            ProcessStartInfo start = new ProcessStartInfo()
+            {
+                ArgumentList = {$"./{unren_name}", this.Path}
             };
-            start.FileName = this.pythonLocations;
+            //start.FileName = this.pythonLocations;
+            start.FileName = process_name;
+            start.WorkingDirectory = this.Path;
+            start.WindowStyle = ProcessWindowStyle.Normal;
             //Console.WriteLine(targetPath);
             //start.Arguments = this.pythonArg;
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            start.RedirectStandardError = true;
+            start.UseShellExecute = true;
+            //start.RedirectStandardOutput = true;
+            //start.RedirectStandardError = true;
 
             try
             {
             Process process = Process.Start(start);
             bool inProcess = true;
-            Text.Buffer.Text = "Patience...";
+            //Text.Buffer.Text = "Patience...";
             Bar.Fraction = 0.0;
             while(inProcess)
             {
@@ -233,19 +246,26 @@ namespace tespygtk
                 }
             }
 
-            string stderr = process.StandardError.ReadToEnd();
-            string stresult = process.StandardOutput.ReadToEnd();
+            //string stderr = process.StandardError.ReadToEnd();
+            //string stresult = process.StandardOutput.ReadToEnd();
             //Console.WriteLine(stresult);
-            list.Add(stresult);
-            list.Add(stderr);
+            //list.Add(stresult);
+            //list.Add(stderr);
             //Text.Buffer.Text = "";
             //Text.Buffer.Text = stresult;
+            message = "Tache Terminée";
             }
             catch (Exception e)
             {
-                list.Add(e.Message);
+            //Dialog.Text = $"Erreur: {e.Message}";
+            message = $"Erreur: {e.Message}";
+            Console.WriteLine("eerrururu");
+            //File.Delete(unren_copy);
+            //Dialog.Run();
+            //Dialog.Destroy();
 
             }
+            return false;
         }
 
 

@@ -5,10 +5,12 @@ Application C# , Ui Gtk
 - Ouvrir et explorer les fichiers .rpy.
 - Extraires les textes des fichiers
 - Recompiler les fichiers modifiers avec sauvegarde.
+- Inclus Unren (Extraction .Rpa .Rpyc)
+- Traduction line de Texte automatique (Google, Yandex, Bing, Microsoft)
 
-(More options un jour si j'ai le temps) 
-- gestions des fichiers .rpyc, .rpa 
-- traduction automatique de texte.
+Note
+- Inclus Unren pour linux, macos et Windows
+- Test du logiciel fait sous linux.
 
 
 

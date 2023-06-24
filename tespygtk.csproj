@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="**\*.glade" />
+    <EmbeddedResource Include="**\*.glade">
+      <LogicalName>%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="custom.css" Link="custom.css" />
+    <Content Include="assets\**\*" LinkBase="assets" />
+    <Content Include="py\**\*" LinkBase="py" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="GtkSharp" Version="3.24.24.*" />
+    <!--<PackageReference Include="Razorvine.Pickle" Version="1.2.1" />-->
+    <PackageReference Include="GTranslate" version="2.1.6" />
+    <PackageReference Include="SharpZipLib" Version="1.4.1" />
+    </ItemGroup>
+
+</Project>

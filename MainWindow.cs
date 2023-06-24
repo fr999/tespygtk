@@ -33,17 +33,9 @@ namespace tespygtk
 
         List<Album> listOfAlbums = new List<Album>();
 
-	    private Edit textView = null;
-
-
         public static Dictionary<string, string> filedict = null;
 
         [UI] private Dialog _poperror = null;
-
-        [UI] private Dialog _popupprocess = null;
-
-        [UI] private TextView _processtext = null;
-        [UI] private ProgressBar _processbar = null;
 
         [UI] private ListBox _listerror = null;
         [UI] private Button _btnopenfolder = null;
@@ -77,11 +69,7 @@ namespace tespygtk
         [UI] private Entry _entryerrortotal = null;
 
         [UI] private Entry _entrytotal = null;
-        [UI] private Entry _entryselect = null;
-        [UI] private Entry _entrytag = null;
-
-
-        
+        [UI] private Entry _entryselect = null;        
 
         [UI] private Button _btnnext = null;
         [UI] private Button _btnonereplace = null;
@@ -122,11 +110,10 @@ namespace tespygtk
 
         //[UI] private TreeSelection _treeselection = null;
 
-        [UI] private CellRendererText _colsource = null;
         [UI] private CellRendererText _coltexte = null;
         [UI] private CellRendererText _colsauv = null;
 
-        [UI] private CellRendererToggle _togglesource = null;
+        //[UI] private CellRendererToggle _togglesource = null;
         [UI] private CellRendererToggle _toggletexte = null;
         [UI] private CellRendererToggle _togglesauv = null;
 
@@ -143,8 +130,6 @@ namespace tespygtk
         [UI] private ComboBox _combointranslate = null;
         [UI] private ComboBox _comboouttranslate = null;
         [UI] private ComboBox _combotranslate = null;
-
-        private int _counter;
 
         Stack<string> undoStack;
 		Stack<string> redoStack;
@@ -221,7 +206,8 @@ namespace tespygtk
             //_searchentry.Changed += btnsearch_Clicked;
             //_searchentry.KeyPressEvent += EntryKeyPressEvent;
 
-            _searchentry.Activated += new EventHandler (btnsearch_Clicked);
+            //_searchentry.Activated += new EventHandler (btnsearch_Clicked);
+            _searchentry.Activated += btnsearch_Clicked;
 
 
             //defaul page

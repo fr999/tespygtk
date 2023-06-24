@@ -13,6 +13,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Content Include="custom.css" Link="custom.css" />
+    <Content Include="assets\**\*" LinkBase="assets" />
+    <Content Include="py\**\*" LinkBase="py" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="GtkSharp" Version="3.24.24.*" />
     <!--<PackageReference Include="Razorvine.Pickle" Version="1.2.1" />-->
     <PackageReference Include="GTranslate" version="2.1.6" />

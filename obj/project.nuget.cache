@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "L7qYUl8iETyjXOdm3SQiP1c7WtvldEBFxs+UxquOAVFKtqzDVzvweAUv/lDBkIlqG94cmBV61phC5SGWoA367Q==",
+  "dgSpecHash": "rMUUXNbUu8ni/cQdclkdNV2hQIoSg3STQat1TqcxOq6cT6TY7DbBe+qhI8GtCTk3VTqYvHeJ2UEGwR4Zpa015g==",
   "success": true,
   "projectFilePath": "/home/lordvenom57/Downloads/tespygtk/tespygtk.csproj",
   "expectedPackageFiles": [
@@ -12,9 +12,7 @@
     "/home/lordvenom57/.nuget/packages/gtksharp/3.24.24.95/gtksharp.3.24.24.95.nupkg.sha512",
     "/home/lordvenom57/.nuget/packages/gtranslate/2.1.6/gtranslate.2.1.6.nupkg.sha512",
     "/home/lordvenom57/.nuget/packages/pangosharp/3.24.24.95/pangosharp.3.24.24.95.nupkg.sha512",
-    "/home/lordvenom57/.nuget/packages/sharpziplib/1.4.1/sharpziplib.1.4.1.nupkg.sha512",
-    "/home/lordvenom57/.nuget/packages/microsoft.netcore.app.runtime.linux-x64/7.0.5/microsoft.netcore.app.runtime.linux-x64.7.0.5.nupkg.sha512",
-    "/home/lordvenom57/.nuget/packages/microsoft.aspnetcore.app.runtime.linux-x64/7.0.5/microsoft.aspnetcore.app.runtime.linux-x64.7.0.5.nupkg.sha512"
+    "/home/lordvenom57/.nuget/packages/sharpziplib/1.4.1/sharpziplib.1.4.1.nupkg.sha512"
   ],
   "logs": []
 }

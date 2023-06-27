@@ -41,6 +41,10 @@ namespace tespygtk
         [UI] private Button _btnopenfolder = null;
 
         [UI] private MenuItem _btnrpa = null;
+        [UI] private MenuItem _toolgeneratelanguage = null;
+        [UI] private MenuItem _toolforcelanguage = null;
+        [UI] private MenuItem _toollint = null;
+
 
         [UI] private Button _btnextract = null;
 
@@ -178,6 +182,8 @@ namespace tespygtk
             _btncompile.Clicked += btncompile_Clicked;
 
             _btnrpa.Activated += btnrpa_Clicked;
+            _toolgeneratelanguage.Activated += toolgeneratelanguage_Clicked;
+            _toollint.Activated += toollint_Clicked;
 
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
@@ -995,9 +1001,70 @@ namespace tespygtk
             
         }
 
+        private void toollint_Clicked(object sender, EventArgs a)
+        {
+            
+        }
+
+        private void toolgeneratelanguage_Clicked(object sender, EventArgs a)
+        {
+            string folder = string.Empty;
+            string newlangue = string.Empty;
+
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le fichier executable du jeux", null,
+            FileChooserAction.Open,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Label winlabel = new Label("Sélectionner l'executable pour votre system: .sh Linux / .exe Windows");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
+            FileFilter filter = new FileFilter();
+            filter.AddPattern("*.exe");
+            filter.AddPattern("*.sh");
+            filechooser.AddFilter(filter);
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
+            
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.Filename;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+
+
+            if (folder != string.Empty)
+            {
+                MessageDialog md = new MessageDialog (this, 
+                DialogFlags.DestroyWithParent, MessageType.Warning, 
+                ButtonsType.Ok, "Langue de la traduction ex:french/english");
+
+                Entry entrylangue = new Entry("french");
+                md.ContentArea.PackStart (entrylangue, true, false, 10);
+                md.ShowAll();
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                if (res == ResponseType.Ok) 
+                {
+                    newlangue = entrylangue.Text;
+                }
+                md.Destroy();
+                if (newlangue != string.Empty)
+                {
+                    Newlangue test = new Newlangue(folder, newlangue, _progress);            
+                    test.Language();
+                    //Console.WriteLine("passssss");
+                }
+            }
+
+        }
+
         private void btnrpa_Clicked(object sender, EventArgs a)
         {
-            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le dossier racine du jeux", this,
             FileChooserAction.SelectFolder,
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
@@ -1067,7 +1134,7 @@ namespace tespygtk
             {
 
                 _progress.Fraction = 0;
-                UnRpyc test = new UnRpyc(folder);
+                //UnRpyc test = new UnRpyc(folder);
                 //Thread t = new Thread(new ThreadStart(test.UnRen));
                 //test.UnRen();            
                 //test.UnRen();

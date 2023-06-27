@@ -1001,9 +1001,66 @@ namespace tespygtk
             
         }
 
-        private void toollint_Clicked(object sender, EventArgs a)
+        private async void toollint_Clicked(object sender, EventArgs a)
         {
+            string folder = string.Empty;
+
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le fichier executable du jeux", null,
+            FileChooserAction.Open,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Label winlabel = new Label("Sélectionner l'executable pour votre system: .sh Linux / .exe Windows");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
+            FileFilter filter = new FileFilter();
+            filter.AddPattern("*.exe");
+            filter.AddPattern("*.sh");
+            filechooser.AddFilter(filter);
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
             
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.Filename;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+
+
+            if (folder != string.Empty)
+            {
+                Newlint test = new Newlint(folder, _progress);            
+                //test.Lint();
+                var result = await test.Lint();
+
+                string lintfile = System.IO.Path.Join(System.IO.Path.GetDirectoryName(folder), "log.txt");
+                if (System.IO.File.Exists(lintfile))
+                {
+                    MessageDialog md = new MessageDialog (this, 
+                    DialogFlags.DestroyWithParent, MessageType.Warning, 
+                    ButtonsType.Ok, "Resultat du scan (Lint)");
+                    md.SetSizeRequest(400, 400);
+                    md.Modal = false;
+
+                    ScrolledWindow scroll = new ScrolledWindow();
+                    TextView viewtexte = new TextView();
+                    System.IO.StreamReader stream = new System.IO.StreamReader(lintfile);
+				    viewtexte.Buffer.Text = stream.ReadToEnd();
+                    scroll.Add(viewtexte);
+                    md.ContentArea.PackStart (scroll, true, true, 10);
+                    md.ShowAll();
+                    Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                    md.Destroy();
+                    //if (res == ResponseType.Ok) 
+
+                }
+                
+            }
+
         }
 
         private void toolgeneratelanguage_Clicked(object sender, EventArgs a)

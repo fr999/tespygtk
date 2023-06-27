@@ -326,6 +326,104 @@ public class Newlangue
 
     }
 
+
+public class Newlint
+    {
+        string Path;
+
+        string Name;
+        string unren_name;
+
+        string process_name;
+
+        string message;
+
+        private ProgressBar Bar = null;
+        
+        public Newlint(string _path, ProgressBar _bar)
+        {
+            this.Path = System.IO.Path.GetDirectoryName(_path);
+            this.Name = System.IO.Path.GetFileName(_path);
+            this.Bar = _bar;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                process_name = "cmd";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            process_name = "/bin/bash";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            Console.WriteLine("MacOS");
+            //????// 
+            process_name = "/bin/bash";
+            }
+        }   
+        public async Task<bool> Lint()
+        {           
+            var result = await Task.Run(() => Connection());
+            MessageDialog md = new MessageDialog (null, 
+            DialogFlags.DestroyWithParent, MessageType.Warning, 
+            ButtonsType.Ok, message);
+            md.Run();
+            md.Destroy();
+            return true; 
+        }
+
+        public bool Connection()
+        {
+            ProcessStartInfo start = new ProcessStartInfo()
+            {
+                //./NekoParadise.sh '' translate ital
+                ArgumentList = {$"./{this.Name}", "--lint"}
+            };
+            //start.FileName = this.pythonLocations;
+            start.FileName = process_name;
+            start.WorkingDirectory = this.Path;
+            start.WindowStyle = ProcessWindowStyle.Normal;
+            start.UseShellExecute = false;
+            //start.RedirectStandardOutput = true;
+            start.RedirectStandardError = true;
+
+            try
+            {
+            Process process = Process.Start(start);
+            bool inProcess = true;
+            Bar.Fraction = 0.0;
+            while(inProcess)
+            {
+                
+                if (Bar.Fraction >= 1.0)
+                {
+                    Bar.Fraction = 0.0;
+                }
+                else
+                {
+                    Bar.Fraction += 0.1;
+                    System.Threading.Thread.Sleep(200);
+
+                }
+
+                if (process.HasExited)
+                {
+                    Bar.Fraction = 0.0;
+                    inProcess = false;
+                }
+            }
+
+            string stderr = process.StandardError.ReadToEnd();
+            //string stresult = process.StandardOutput.ReadToEnd();
+            //Console.WriteLine(stresult);
+            message = $"Tache Terminée {stderr}";
+            }
+            catch (Exception e)
+            {
+            message = $"Erreur: {e.Message}";
+            }
+            return false;
+        }
+
+    }
+
     public class Edit
     {
 

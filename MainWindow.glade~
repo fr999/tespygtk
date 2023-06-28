@@ -569,20 +569,25 @@
                       </object>
                     </child>
                     <child>
-                      <object class="GtkMenuItem" id="_toolforcelanguage">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="tooltip-text" translatable="yes">Crée un fichier dans le dossier game/tl/langue</property>
-                        <property name="label" translatable="yes">Forcer la langue du jeux</property>
-                        <property name="use-underline">True</property>
-                      </object>
-                    </child>
-                    <child>
                       <object class="GtkMenuItem" id="_toollint">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="tooltip-text" translatable="yes">Scan le jeux pour afficher les erreus</property>
                         <property name="label" translatable="yes">Vérifier le script du jeux (Lint)</property>
+                        <property name="use-underline">True</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkSeparatorMenuItem">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkMenuItem" id="_toolforcelanguage">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="label" translatable="yes">Forcer la langue</property>
                         <property name="use-underline">True</property>
                       </object>
                     </child>

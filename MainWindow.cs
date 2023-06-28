@@ -184,6 +184,7 @@ namespace tespygtk
             _btnrpa.Activated += btnrpa_Clicked;
             _toolgeneratelanguage.Activated += toolgeneratelanguage_Clicked;
             _toollint.Activated += toollint_Clicked;
+            _toolforcelanguage.Activated += toolforcelanguage_Clicked;
 
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
@@ -1001,6 +1002,58 @@ namespace tespygtk
             
         }
 
+        private void toolforcelanguage_Clicked(object sender, EventArgs a)
+        {
+            string folder = string.Empty;
+            string message = string.Empty;
+
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le dossier tl", null,
+            FileChooserAction.SelectFolder,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Label winlabel = new Label("Sélectionner le dossier langue à forcer ex:game/tl/french");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
+            
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.CurrentFolder;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+            if (folder != string.Empty)
+            {
+                try 
+                {
+                    string name = System.IO.Path.GetFileName(folder);
+                    string newfile = System.IO.Path.Join(folder, $"_{name}.rpy");
+                    string someText = $"define config.language = \"{name}\"\ninit offset = 100";
+                    System.IO.StreamWriter output = new System.IO.StreamWriter(newfile);
+                    output.Write(someText);
+                    output.Close();
+                    message = $"Fichier créer avec succée: {newfile}";
+                } 
+                catch(Exception e)
+                {
+                    //Console.WriteLine(e.Message);
+                    message = e.Message;
+                }
+
+                MessageDialog md = new MessageDialog (this, 
+                DialogFlags.DestroyWithParent, MessageType.Info, 
+                ButtonsType.Ok, message);
+                md.Run();
+                md.Destroy();
+            }
+
+        }
+
         private async void toollint_Clicked(object sender, EventArgs a)
         {
             string folder = string.Empty;
@@ -1040,23 +1093,24 @@ namespace tespygtk
                 string lintfile = System.IO.Path.Join(System.IO.Path.GetDirectoryName(folder), "log.txt");
                 if (System.IO.File.Exists(lintfile))
                 {
-                    MessageDialog md = new MessageDialog (this, 
-                    DialogFlags.DestroyWithParent, MessageType.Warning, 
-                    ButtonsType.Ok, "Resultat du scan (Lint)");
-                    md.SetSizeRequest(400, 400);
-                    md.Modal = false;
+                    
+                    Dialog md = new Dialog ();
+                    md.SetSizeRequest(600, 400);
 
                     ScrolledWindow scroll = new ScrolledWindow();
                     TextView viewtexte = new TextView();
+                    viewtexte.LeftMargin = 10;
+                    viewtexte.RightMargin = 10;
+                    viewtexte.TopMargin = 10;
+                    viewtexte.BottomMargin = 10;
+
                     System.IO.StreamReader stream = new System.IO.StreamReader(lintfile);
 				    viewtexte.Buffer.Text = stream.ReadToEnd();
                     scroll.Add(viewtexte);
                     md.ContentArea.PackStart (scroll, true, true, 10);
                     md.ShowAll();
-                    Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
-                    md.Destroy();
-                    //if (res == ResponseType.Ok) 
-
+                    //Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                    //md.Destroy();
                 }
                 
             }
@@ -1073,7 +1127,7 @@ namespace tespygtk
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
             //filechooser.Run();
-            Label winlabel = new Label("Sélectionner l'executable pour votre system: .sh Linux / .exe Windows");
+            Label winlabel = new Label("Sélectionner l'executable du jeux pour votre system: .sh Linux / .exe Windows");
             filechooser.ContentArea.PackStart (winlabel, true, false, 10);
             filechooser.ShowAll();
             FileFilter filter = new FileFilter();
@@ -1162,67 +1216,24 @@ namespace tespygtk
                 //listerror = test.list;
             }
 
-        }
-
-      private void btnrpyc_Clicked(object sender, EventArgs a)
-        {
-            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
-            FileChooserAction.SelectFolder,
-            "Cancel",ResponseType.Cancel,
-            "Open",ResponseType.Accept);
-            //filechooser.Run();
-            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
-            
-            string folder = string.Empty;
-
-            if (dialog == ResponseType.Accept) 
-            {
-                folder = filechooser.CurrentFolder;
-            }
-            else
-            {
-                filechooser.Destroy();
-                return;
-            }
-            filechooser.Destroy();
-
-
-            if (folder != string.Empty)
-            {
-
-                _progress.Fraction = 0;
-                //UnRpyc test = new UnRpyc(folder);
-                //Thread t = new Thread(new ThreadStart(test.UnRen));
-                //test.UnRen();            
-                //test.UnRen();
-
-                //Task task = test.UnRen();
-                //await Task.Run(() => test.UnRen()).ContinueWith(t => taskend = false);                        
-                
-                //listerror = test.list;
-            }
-
-        }
-        
+        }        
 
         private void btnopenfolder_Clicked(object sender, EventArgs a)
         {
 
-            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le dossier langue", this,
             FileChooserAction.SelectFolder,
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
+            Label winlabel = new Label("Sélectionner le dossier langue ex:game/tl/french");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
 
             if (filechooser.Run() == (int)ResponseType.Accept) 
             {
                 //efface listore
                 store.Clear();
-
-                //System.IO.FileStream file = System.IO.File.OpenRead(filechooser.CurrentFolder);
-                //System.IO.Directory.SetCurrentDirectory(filechooser.CurrentFolder);
-                //string folder = Path.GetDirectoryName( file );
-                System.IO.Directory.CreateDirectory(filechooser.CurrentFolder);
-                //string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder);
+                /////System.IO.Directory.CreateDirectory(filechooser.CurrentFolder);
                 string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder, "*.rpy", System.IO.SearchOption.AllDirectories);
                 Array.Sort(files);
 

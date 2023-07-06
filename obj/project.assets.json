@@ -104,19 +104,6 @@
         "runtime": {
           "lib/net6.0/PangoSharp.dll": {}
         }
-      },
-      "SharpZipLib/1.4.1": {
-        "type": "package",
-        "compile": {
-          "lib/net6.0/ICSharpCode.SharpZipLib.dll": {
-            "related": ".pdb;.xml"
-          }
-        },
-        "runtime": {
-          "lib/net6.0/ICSharpCode.SharpZipLib.dll": {
-            "related": ".pdb;.xml"
-          }
-        }
       }
     }
   },
@@ -229,34 +216,12 @@
         "pangosharp.3.24.24.95.nupkg.sha512",
         "pangosharp.nuspec"
       ]
-    },
-    "SharpZipLib/1.4.1": {
-      "sha512": "X8QiHZS7+bbZy85LfpKCAL9oh0yZkiiecWhQL5F1Yn1AKFDYiOzR3UG5vI+9bDYGRGyseVdMW5sTH8mv8LXF1g==",
-      "type": "package",
-      "path": "sharpziplib/1.4.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "images/sharpziplib-nuget-256x256.png",
-        "lib/net6.0/ICSharpCode.SharpZipLib.dll",
-        "lib/net6.0/ICSharpCode.SharpZipLib.pdb",
-        "lib/net6.0/ICSharpCode.SharpZipLib.xml",
-        "lib/netstandard2.0/ICSharpCode.SharpZipLib.dll",
-        "lib/netstandard2.0/ICSharpCode.SharpZipLib.pdb",
-        "lib/netstandard2.0/ICSharpCode.SharpZipLib.xml",
-        "lib/netstandard2.1/ICSharpCode.SharpZipLib.dll",
-        "lib/netstandard2.1/ICSharpCode.SharpZipLib.pdb",
-        "lib/netstandard2.1/ICSharpCode.SharpZipLib.xml",
-        "sharpziplib.1.4.1.nupkg.sha512",
-        "sharpziplib.nuspec"
-      ]
     }
   },
   "projectFileDependencyGroups": {
     "net7.0": [
       "GTranslate >= 2.1.6",
-      "GtkSharp >= 3.24.24.*",
-      "SharpZipLib >= 1.4.1"
+      "GtkSharp >= 3.24.24.*"
     ]
   },
   "packageFolders": {
@@ -303,10 +268,6 @@
           "GtkSharp": {
             "target": "Package",
             "version": "[3.24.24.*, )"
-          },
-          "SharpZipLib": {
-            "target": "Package",
-            "version": "[1.4.1, )"
           }
         },
         "imports": [

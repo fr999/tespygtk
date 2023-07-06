@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using System.Threading;
 
 
-
 //peux etre utile
 //GLib.Timeout.Add(100, onTimeout);
 
@@ -676,6 +675,18 @@ namespace tespygtk
                         listOfAlbums.Add(example);
                     }
                 break;
+                    case 3:
+                    //@"goto line"
+
+                    TextIter startline = names.Item1.Buffer.GetIterAtLine(Int32.Parse(text)-1);
+                    TextIter endline =  names.Item1.Buffer.GetIterAtLine(Int32.Parse(text));
+
+       
+                    names.Item1.Buffer.ApplyTag(names.Item3, startline, endline);
+                    names.Item1.ScrollToIter(endline, 0, false, 0, 0);
+
+                
+                break;
 
                 default:
                 break;
@@ -1324,9 +1335,58 @@ namespace tespygtk
 
 
             treeselection_Update();
-        }
+        }   
+
+    	private void OnWidgetDrawn (object o, DrawnArgs args) {
 
 
+        TextView textView = o as TextView;      
+        Cairo.Context cr = args.Cr;
+
+        //var parent = textView.Parent as ScrolledWindow;
+
+      
+    	/* Draw text */
+		Gdk.CairoHelper.SetSourceRgba(cr, StyleContext.GetColor (StateFlags.Link));
+        Pango.Layout textLayout = new Pango.Layout(textView.PangoContext);
+        //textLayout.Alignment = Pango.Alignment.Right;
+        textLayout.FontDescription = Pango.FontDescription.FromString (_btnfont.FontName);
+    	int infoCount = textView.Buffer.LineCount;
+        //taille fenetre
+        int minVisibleY = textView.VisibleRect.Top;
+   		int maxVisibleY = textView.VisibleRect.Bottom;
+
+        //visible start et end iters
+   		TextIter startIter, endIter;
+   		int lineTop;
+    	textView.GetLineAtY(out startIter, minVisibleY, out lineTop);
+    	textView.GetLineAtY(out endIter, maxVisibleY, out lineTop);
+        int startLine = startIter.Line;
+        int endLine = endIter.Line;
+
+        List<string> listnum = new List<string>();
+
+
+    	for (int i = startLine ; i <= endLine ; i++) {
+            listnum.Add(i.ToString());
+		}
+
+        textLayout.SetText(String.Join("\n", listnum));
+        cr.MoveTo(5, 10);
+        int textLayoutWidth, textLayoutHeight;
+        textLayout.GetPixelSize(out textLayoutWidth, out textLayoutHeight);
+        
+
+        Pango.CairoHelper.ShowLayout(cr, textLayout); 
+
+        /* text view's left margin */
+        textView.SetBorderWindowSize(TextWindowType.Left, textLayoutWidth + 10);
+
+		//cr.GetTarget().Dispose();
+		//cr.Dispose();
+        cr.Stroke();
+
+    }
         private void treeselection_Update()
         {
 
@@ -1348,11 +1408,13 @@ namespace tespygtk
 
                     //_textviewsource.ModifyFont(Pango.FontDescription.FromString ("Comic Sans MS 40"));
                     _textviewsource.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
-
                     
-                    //string fontName = _btnfont.FontName;
-                    //Pango.FontDescription fontDescription = Pango.FontDescription.FromString(fontName);
+					//_textviewsource.Drawn += OnWidgetDrawn;
+                    //_textviewsource.QueueDraw();
 
+
+
+                    //_textviewsource.Drawn -= OnWidgetDrawn;
                     //_textviewsource.Add(fontDescription);
                     //_textviewsource.Buffer.Text = "testttt";
                     //sw.Write(_textviewsource.Buffer.Text);

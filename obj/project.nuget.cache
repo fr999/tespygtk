@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "rMUUXNbUu8ni/cQdclkdNV2hQIoSg3STQat1TqcxOq6cT6TY7DbBe+qhI8GtCTk3VTqYvHeJ2UEGwR4Zpa015g==",
+  "dgSpecHash": "iOjdL34VthK6R7rLB6/TU/6Ih4SlbOL5zhPbpFxS5FK5KEg/J6RIc2qij33/GCz1bK7k7VT7yRQ1m6fL2fnMRQ==",
   "success": true,
   "projectFilePath": "/home/lordvenom57/Downloads/tespygtk/tespygtk.csproj",
   "expectedPackageFiles": [
@@ -11,8 +11,7 @@
     "/home/lordvenom57/.nuget/packages/glibsharp/3.24.24.95/glibsharp.3.24.24.95.nupkg.sha512",
     "/home/lordvenom57/.nuget/packages/gtksharp/3.24.24.95/gtksharp.3.24.24.95.nupkg.sha512",
     "/home/lordvenom57/.nuget/packages/gtranslate/2.1.6/gtranslate.2.1.6.nupkg.sha512",
-    "/home/lordvenom57/.nuget/packages/pangosharp/3.24.24.95/pangosharp.3.24.24.95.nupkg.sha512",
-    "/home/lordvenom57/.nuget/packages/sharpziplib/1.4.1/sharpziplib.1.4.1.nupkg.sha512"
+    "/home/lordvenom57/.nuget/packages/pangosharp/3.24.24.95/pangosharp.3.24.24.95.nupkg.sha512"
   ],
   "logs": []
 }

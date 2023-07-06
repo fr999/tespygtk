@@ -9,8 +9,6 @@ using GTranslate.Translators;
 using System.Threading.Tasks;
 using Gtk;
 
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
-
 //./NekoParadise.sh --lint
 
 //./renpy.sh NekoParadise-0.16-pc-standard-compressed/ translate ital
@@ -234,7 +232,6 @@ public class Newlangue
 
         string Name;
         string Langue;
-        string unren_name;
 
         string process_name;
 
@@ -332,7 +329,6 @@ public class Newlint
         string Path;
 
         string Name;
-        string unren_name;
 
         string process_name;
 

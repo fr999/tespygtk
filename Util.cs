@@ -639,44 +639,44 @@ public class Newlint
                 return string.Empty;
             }
 
-            // try
-            // {
-            // var m1 = Regex.Matches(line, @"""(.*?)""");
-            // //Console.WriteLine(m1[0].Value.ToString().Trim('"'));
-            // line = m1[0].Value.ToString().Trim('"');
-            // }
-            // catch
-            // {
-            //     return string.Empty;
-            // }
-                        bool fQuotesFound = false;
-            int left = 0;
-            int right = line.Length;
-
-            for (int i = 0; i < line.Length; i++)
+            try
             {
-                if (line[i] == '"')
-                {
-                    fQuotesFound = true;
-                    if (left == 0)
-                    {
-                        left = i + 1;
-                    }
-                    else
-                    {
-                        if (i == 0 || line[i - 1] != '\\')
-                        {
-                            right = i;
-                            break;
-                        }
-                    }
-                }
+             var m1 = Regex.Matches(line, @"""(?:\\""|[^""])*""");
+            // //Console.WriteLine(m1[0].Value.ToString().Trim('"'));
+            line = m1[0].Value.ToString().Trim('"');
             }
+            catch
+             {
+                 return string.Empty;
+             }
+            //bool fQuotesFound = false;
+            //int left = 0;
+            //int right = line.Length;
 
-            if (!fQuotesFound)
-                return string.Empty;
+            // for (int i = 0; i < line.Length; i++)
+            // {
+            //     if (line[i] == '"')
+            //     {
+            //         fQuotesFound = true;
+            //         if (left == 0)
+            //         {
+            //             left = i + 1;
+            //         }
+            //         else
+            //         {
+            //             if (i == 0 || line[i - 1] != '\\')
+            //             {
+            //                 right = i;
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
 
-            line = line.Substring(left, right - left);
+            //if (!fQuotesFound)
+            //    return string.Empty;
+
+            //line = line.Substring(left, right - left);
 
             return line;
 

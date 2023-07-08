@@ -755,46 +755,29 @@ namespace tespygtk
 
         private void btnselectcara_Cliked(object sender, EventArgs a)
         {
-            //Console.WriteLine(_entrymaxcara.Text);
             Gtk.TextIter start;
             Gtk.TextIter end;
 
-    
-           //change cursor position
-           //textView.Buffer.PlaceCursor(textView.Buffer.EndIter).
-           // try 
-            //{
             var names = Lookup();
-            string max = _entrymaxcara.Text;
-
-            //var start2 = names.Item1.Buffer.CursorPosition;
+            int max = 1000;
+            try 
+            {
+            max = int.Parse(_entrymaxcara.Text);
+            }
+            catch
+            {
+                return;
+            }
 
             names.Item1.Buffer.GetSelectionBounds(out start, out end);
 
             names.Item1.GrabFocus();
-            //start = names.Item1.Buffer.CursorPosition;
-            end = names.Item1.Buffer.GetIterAtOffset(end.Offset + 3000);
+            end = names.Item1.Buffer.GetIterAtOffset(end.Offset + max);
             end.BackwardChars(end.LineOffset); 
 
-            //end = end.CharsInLine;
-            //end.CharsInLine = 3000;
             string text = names.Item1.Buffer.GetText(start, end, true);
-
-            //TextMark startMark = buffer.CreateMark("start", start, false);
-            //TextMark endMark   = buffer.CreateMark("end", end, true);
-            //TextIter start3 = buffer.GetIterAtMark(startMark);
-            //TextIter end3   = buffer.GetIterAtMark(endMark)
-            //names.Item1.Buffer.PlaceCursor(end);
             names.Item1.Buffer.SelectRange(start, end);
             names.Item1.ScrollToIter(end, 0, false, 0, 0);
-            
-
-            //Console.WriteLine(text);
-            //}
-            //catch 
-            //{
-
-            //}
 
         }
 
@@ -890,6 +873,25 @@ namespace tespygtk
         private void btnextract_Clicked(object sender, EventArgs a)
         {
 
+            if (System.IO.File.Exists(filedict["file_fr"]))
+            {
+
+                MessageDialog md = new MessageDialog (
+                    this, 
+                    DialogFlags.DestroyWithParent, 
+                    MessageType.Warning, 
+                    ButtonsType.OkCancel, 
+                    String.Format("Le fichier {0} existe\nVoulez-vous l'ecraser.",  filedict["filename_fr"]));
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                md.Destroy();
+
+            if (res == ResponseType.Cancel)
+            {
+                md.Destroy();
+                return;
+            }
+            }
+
             System.IO.StreamWriter output = new System.IO.StreamWriter(filedict["file_fr"]);
 
             var dictionary = System.IO.File.ReadAllLines(filedict["file"]);
@@ -898,57 +900,81 @@ namespace tespygtk
             int total = dictionary.Length;
 
             int cnt=1;
-            foreach (string line in dictionary)
-                {
-                    string newline = Util.ParseRpyLine(line);
-                    double calc = cnt/total;
-                    _progress.Fraction = Math.Floor(calc);
-                    cnt++;
-                    if (newline != string.Empty)
+
+            MessageDialog md2 = new MessageDialog (this, 
+            DialogFlags.DestroyWithParent, MessageType.Info, 
+            ButtonsType.Ok,"");
+
+            try
+            {
+                foreach (string line in dictionary)
                     {
-                        output.WriteLine(newline);
-                        //Console.WriteLine(line);
+                        string newline = Util.ParseRpyLine(line);
+                        double calc = cnt/total;
+                        _progress.Fraction = Math.Floor(calc);
+                        cnt++;
+                        if (newline != string.Empty)
+                        {
+                            output.WriteLine(newline);
+                            //Console.WriteLine(line);
+                        }
+
                     }
+                    _progress.Fraction = 0;
+                    output.Close();
+                    md2.Text = String.Format("Fichier Créer avec Succée {0}.",  filedict["filename_fr"]);
 
-                }
-                _progress.Fraction = 0;
-                output.Close();
+            }
+            catch(Exception exp)  
+            {  
+                //Console.Write(exp.Message);
+                md2.Text = String.Format("Erreur {0}.",  exp.Message);
 
-                MessageDialog md = new MessageDialog (this, 
-                DialogFlags.DestroyWithParent, MessageType.Info, 
-                ButtonsType.Ok,"");
+            } 
 
-            if (System.IO.File.Exists(filedict["file_fr"]))
-                {
-                    md.Text = String.Format("Fichier Créer avec Succée {0}.",  filedict["filename_fr"]);
-        
-                }
-                else 
-                {
-                    md.Text = String.Format("Erreur Impossible de trouver {0}.",  filedict["filename_fr"]);
+            md2.Run();
+            md2.Destroy();
 
-                }
-
-                md.Run();
-                md.Destroy();
-
-                treeselection_Update();
+            treeselection_Update();
 
         }
 
         private void btncompile_Clicked(object sender, EventArgs a)
         {
+
+            if (System.IO.File.Exists(filedict["file_old"]))
+            {
+
+                MessageDialog md = new MessageDialog (
+                    this, 
+                    DialogFlags.DestroyWithParent, 
+                    MessageType.Warning, 
+                    ButtonsType.OkCancel, 
+                    String.Format("Le fichier {0} existe\nVoulez-vous l'ecraser.",  filedict["filename_old"]));
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                md.Destroy();
+
+            if (res == ResponseType.Cancel)
+            {
+                md.Destroy();
+                return;
+            }
+            else 
+            {
+                System.IO.File.Delete(filedict["file_old"]);
+            }
+            }
             //copie
             try 
             {
-                System.IO.File.Copy(filedict["file"], filedict["file_old"]);
+                System.IO.File.Copy(filedict["file"], filedict["file_old"], true);
 
             }
-            catch 
+            catch(Exception exp)
             {
                 MessageDialog md1 = new MessageDialog (this, 
                 DialogFlags.DestroyWithParent, MessageType.Error, 
-                ButtonsType.Ok, String.Format("Erreur Impossible de créer {0}.",  filedict["file_old"]));
+                ButtonsType.Ok, String.Format("Erreur Impossible de créer {0}.{1}",  filedict["file_old"], exp.Message));
                 md1.Run();
                 md1.Destroy();
                 return;
@@ -961,55 +987,54 @@ namespace tespygtk
 
             int cnt=1;
 
-            System.IO.StreamReader reader = new System.IO.StreamReader(filedict["file_fr"]);
+            MessageDialog md2 = new MessageDialog (this, 
+            DialogFlags.DestroyWithParent, MessageType.Info, 
+            ButtonsType.Ok,"");
 
-            using (System.IO.StreamWriter output = new System.IO.StreamWriter(filedict["file"]))
+            try 
             {
-                foreach (string line in dictionary)
+
+                System.IO.StreamReader reader = new System.IO.StreamReader(filedict["file_fr"]);
+
+                using (System.IO.StreamWriter output = new System.IO.StreamWriter(filedict["file"]))
                 {
-                    string newline = Util.ParseRpyLine(line);
-                    double calc = cnt/total;
-                    _progress.Fraction = Math.Floor(calc);
-                    cnt++;
-                    if (newline != string.Empty)
+                    foreach (string line in dictionary)
                     {
-                        var replaceline = line.Replace(newline, reader.ReadLine());
-                        output.WriteLine(replaceline);
+                        string newline = Util.ParseRpyLine(line);
+                        double calc = cnt/total;
+                        _progress.Fraction = Math.Floor(calc);
+                        cnt++;
+                        if (newline != string.Empty)
+                        {
+                            var replaceline = line.Replace(newline, reader.ReadLine());
+                            output.WriteLine(replaceline);
+
+                        }
+                        else 
+                        {
+                            output.WriteLine(line);
+
+                        }
 
                     }
-                    else 
-                    {
-                        output.WriteLine(line);
-
-                    }
-
                 }
+
+                md2.Text = String.Format("Fichier Créer avec Succé et Sauvegardé {0}/{1}.",  filedict["filename"], filedict["filename_old"]);
+
             }
+            catch(Exception exp)  
+            {  
+                //Console.Write(exp.Message);
+                md2.Text = String.Format("Erreur {0}.", exp.Message);
+  
+            } 
 
-            //System.IO.File.WriteAllLines(filedict["file"], dictionary);
+            _progress.Fraction = 0;
 
+            md2.Run();
+            md2.Destroy();
 
-                _progress.Fraction = 0;
-
-                MessageDialog md = new MessageDialog (this, 
-                DialogFlags.DestroyWithParent, MessageType.Info, 
-                ButtonsType.Ok,"");
-
-            if (System.IO.File.Exists(filedict["file_old"]))
-                {
-                    md.Text = String.Format("Fichier Créer avec Succé et Sauvegardé {0}/{1}.",  filedict["filename"], filedict["filename_old"]);
-        
-                }
-                else 
-                {
-                    md.Text = String.Format("Erreur Impossible de trouver {0}.",  filedict["filename_old"]);
-
-                }
-
-                md.Run();
-                md.Destroy();
-
-                treeselection_Update();
+            treeselection_Update();
             
         }
 

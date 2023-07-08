@@ -248,6 +248,9 @@
       <row>
         <col id="0" translatable="yes">Regex</col>
       </row>
+      <row>
+        <col id="0" translatable="yes">Ligne</col>
+      </row>
     </data>
   </object>
   <object class="GtkListStore" id="liststore4">
@@ -1026,7 +1029,7 @@
                             <property name="width-chars">5</property>
                             <property name="max-width-chars">5</property>
                             <property name="text" translatable="yes">3000</property>
-                            <property name="input-purpose">digits</property>
+                            <property name="input-purpose">number</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

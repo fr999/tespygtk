@@ -86,8 +86,6 @@ namespace tespygtk
         [UI] private FontButton _btnfont = null;
 
 
-        [UI] private TreeView _treeview = null;
-
         [UI] private TreeView _treeviewselect = null;
 
 
@@ -111,15 +109,6 @@ namespace tespygtk
 
         [UI] private InfoBar _infotexte = null;
 
-        //[UI] private TreeSelection _treeselection = null;
-
-        [UI] private CellRendererText _coltexte = null;
-        [UI] private CellRendererText _colsauv = null;
-
-        //[UI] private CellRendererToggle _togglesource = null;
-        [UI] private CellRendererToggle _toggletexte = null;
-        [UI] private CellRendererToggle _togglesauv = null;
-
         [UI] private ProgressBar _progress  = null;
 
         [UI] private ToggleButton _toggleerror = null;
@@ -138,10 +127,8 @@ namespace tespygtk
 		Stack<string> redoStack;
 
         bool editchange = false;
-
-        private Gtk.ListStore store = new Gtk.ListStore (typeof(string), typeof(string), typeof(string));
         
-        private Gtk.ListStore fileslist = new Gtk.ListStore (typeof(bool), typeof(string), typeof(bool), typeof(string), typeof(bool), typeof(string));
+        private Gtk.ListStore fileslist = new Gtk.ListStore (typeof(string), typeof(string), typeof(bool), typeof(string), typeof (string), typeof(bool), typeof(string), typeof(string), typeof(string));
         //typeof(Gdk.Pixbuf)
 
         string Box_Bracket;
@@ -168,7 +155,7 @@ namespace tespygtk
             _btntabtexte .Clicked += btntabaccueil_Clicked;
             _btntabsauv.Clicked += btntabaccueil_Clicked;
     
-            _treeview.RowActivated += treeselection_RowActivated;
+            _treeviewselect.RowActivated += homeselection_RowActivated;
 
 
             _listerror.ListRowActivated += listerror_ListRowActivated;
@@ -935,7 +922,7 @@ namespace tespygtk
             md2.Run();
             md2.Destroy();
 
-            treeselection_Update();
+            treeselection_write(true);
 
         }
 
@@ -1034,7 +1021,7 @@ namespace tespygtk
             md2.Run();
             md2.Destroy();
 
-            treeselection_Update();
+            treeselection_write(true);
             
         }
 
@@ -1268,20 +1255,13 @@ namespace tespygtk
             if (filechooser.Run() == (int)ResponseType.Accept) 
             {
                 //efface listore
-                store.Clear();
+                fileslist.Clear();
                 /////System.IO.Directory.CreateDirectory(filechooser.CurrentFolder);
                 string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder, "*.rpy", System.IO.SearchOption.AllDirectories);
                 Array.Sort(files);
 
                 _txtfolder.Text = filechooser.CurrentFolder;
-                _txtnbfolder.Text = files.Length.ToString();
-		        //string[] directories = System.IO.Directory.GetDirectories(filechooser.CurrentFolder);
-                //Gtk.TreeViewColumn pathColumn = new Gtk.TreeViewColumn ();
-                //pathColumn.Title = "Path";
-                //_treeview.AppendColumn( pathColumn );
-
-                //var pathListStore = new Gtk.ListStore( typeof( string ) );
-                //_treeview.Model = liststore7;
+                _txtnbfolder.Text = string.Format($"Nbs de fichiers: {files.Length.ToString()}");
 
 
                 foreach (string file in files)
@@ -1292,22 +1272,10 @@ namespace tespygtk
 
                     string lenght = Util.GetFileSize(file);
 
-                    
-                    //System.IO.File.Move(file, targetPath);
-                    //Console.WriteLine(length);
-                    //store.AppendValues(fileName, lenght, file);
-
-                    store.AppendValues(new object[] { fileName, lenght, file });
-                    //liststore7.AppendValues(fileName, lenght, file);
+                    listfile(file, TreeIter.Zero);
                     
                 }
 
-                store.SetSortColumnId(0, Gtk.SortType.Ascending);
-                _treeview.Model = store;
-
-
-                //Console.WriteLine(test);
-                //file.Close();
             }
 
 
@@ -1315,6 +1283,73 @@ namespace tespygtk
             //Console.WriteLine(this._btnopenfolder[]file);
                     
         }
+
+        private void listfile(string file, TreeIter iter)
+        {
+            filedict = Util.getDictFile(file);
+            string lenght = Util.GetFileSize(file);
+            bool check_fr = false;
+            bool check_old = false;
+            string file_fr = string.Empty;
+            string file_old = string.Empty;
+            string color1 = null;
+            string color2 = null;
+
+            // if (System.IO.File.Exists(filedict["file"]))
+            //     {
+
+            //     }
+            if (System.IO.File.Exists(filedict["file_fr"]))
+                {
+                    check_fr = true;
+                    file_fr = filedict["filename_fr"];
+                    color1 = "LightGreen";
+                }
+
+            if (System.IO.File.Exists(filedict["file_old"]))
+                {
+                    check_old = true;
+                    file_old = filedict["filename_old"];
+                    color2 = "LightGreen";
+                    //LightCoral
+                }
+            if (iter.Equals(TreeIter.Zero))
+            {
+            fileslist.AppendValues(new object[] {lenght, filedict["filename"], check_fr, file_fr, color1, check_old, file_old, color2, file });
+            }
+            else
+            {
+            fileslist.SetValues(iter, new object[] {lenght, filedict["filename"], check_fr, file_fr, color1, check_old, file_old, color2, file });
+            }
+            //fileslist.SetValues(iter, )
+            _treeviewselect.Model = fileslist;
+            fileslist.SetSortColumnId(1, Gtk.SortType.Ascending);
+
+            
+        }
+
+        private void homeselection_RowActivated(object sender, RowActivatedArgs args)
+        {
+            if (editchange) {
+                bool res = msg_sure();
+                if (!res){
+                    return;
+                }
+                _infotexte.Visible = false;
+                editchange = false;
+            }
+            
+            //select
+            var model = _treeviewselect.Model;
+            Gtk.TreeIter selected;
+            _treeviewselect.Selection.GetSelected(out selected);
+            var value2 = model.GetValue(selected, 8);
+
+            filedict = Util.getDictFile(value2.ToString());
+
+            treeselection_write(false);       
+        }
+
 
         public bool msg_sure() 
         {
@@ -1333,6 +1368,7 @@ namespace tespygtk
             {
                 return false;
             }
+            
         }
 
         private void treeselection_RowActivated(object sender, RowActivatedArgs args)
@@ -1348,9 +1384,9 @@ namespace tespygtk
 
             }
             //select
-            var model = _treeview.Model;
+            var model = _treeviewselect.Model;
             Gtk.TreeIter selected;
-            _treeview.Selection.GetSelected(out selected);
+            _treeviewselect.Selection.GetSelected(out selected);
             var value2 = model.GetValue(selected, 2);
             var value = model.GetValue(selected, 0);
 
@@ -1358,8 +1394,9 @@ namespace tespygtk
 
             filedict = Util.getDictFile(value2.ToString());
 
+            Console.WriteLine(value2.ToString());
 
-            treeselection_Update();
+            treeselection_write(false);
         }   
 
     	private void OnWidgetDrawn (object o, DrawnArgs args) {
@@ -1412,20 +1449,12 @@ namespace tespygtk
         cr.Stroke();
 
     }
-        private void treeselection_Update()
+        private void treeselection_write(bool update)
         {
-
-            fileslist.Clear();
-            
-            bool check_source = false;
-            bool check_fr = false;
-            bool check_old = false;
 
             //new Gdk.Pixbuf("assets/report.png")
             if (System.IO.File.Exists(filedict["file"]))
-                {
-                    check_source = true;
-                    
+                {                    
                     System.IO.StreamReader stream = new System.IO.StreamReader(filedict["file"]);
 				    _textviewsource.Buffer.Text = stream.ReadToEnd();
                     _textviewsource.Editable = true;
@@ -1433,23 +1462,7 @@ namespace tespygtk
 
                     //_textviewsource.ModifyFont(Pango.FontDescription.FromString ("Comic Sans MS 40"));
                     _textviewsource.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
-                    
-					//_textviewsource.Drawn += OnWidgetDrawn;
-                    //_textviewsource.QueueDraw();
-
-
-
-                    //_textviewsource.Drawn -= OnWidgetDrawn;
-                    //_textviewsource.Add(fontDescription);
-                    //_textviewsource.Buffer.Text = "testttt";
-                    //sw.Write(_textviewsource.Buffer.Text);
-                    //sw.Close();
-                    //string text = _textviewsource.Buffer.Text;
-                    //int lines = text.Split('\n').Length;
-                    //msg = String.Format("This {0}.  The value is {1}.",  lines,  text.Length);
-
-                    
-
+                
                 }
             else
                 {
@@ -1469,87 +1482,50 @@ namespace tespygtk
 
             if (System.IO.File.Exists(filedict["file_fr"]))
                 {
-                    check_fr = true;
-                    //coltexte = new Gdk.Color(153, 255, 153);
-                    setexiste(true, _toggletexte, _textviewtexte, _coltexte);
 
                     System.IO.StreamReader stream = new System.IO.StreamReader(filedict["file_fr"]);
 				    _textviewtexte.Buffer.Text = stream.ReadToEnd();
-                    //_textviewtexte.Editable = true;
-                    //_textviewtexte.Sensitive = true;
+                    _textviewtexte.Editable = true;
+                    _textviewtexte.Sensitive = true;
                     _textviewtexte.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
 
 
                 }
-            else
+            else 
                 {
-                    //Console.WriteLine("textee nonono");
-                    setexiste(false, _toggletexte, _textviewtexte, _coltexte);                
-                    
+
+                    _textviewtexte.Buffer.Text = "";
+                    _textviewtexte.Editable = false;
+                    _textviewtexte.Sensitive = false;
                 }
             if (System.IO.File.Exists(filedict["file_old"]))
                 {
-                    check_old = true;
-                    //colsauv = new Gdk.Color(153, 255, 153);
-                    setexiste(true, _togglesauv, _textviewsauv, _colsauv);
 
                      System.IO.StreamReader stream = new System.IO.StreamReader(filedict["file_old"]);
 				    _textviewsauv.Buffer.Text = stream.ReadToEnd();
-                    //_textviewsauv.Editable = true;
-                    //_textviewsauv.Sensitive = true;
+                    _textviewsauv.Editable = true;
+                    _textviewsauv.Sensitive = true;
                     _textviewsauv.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
 
                         
                 }
             else
                 {
-                    //Console.WriteLine("sauv nonono");
-                    setexiste(false, _togglesauv, _textviewsauv, _colsauv);   
+                _textviewsauv.Buffer.Text = "";
+                _textviewsauv.Editable = false;
+                _textviewsauv.Sensitive = false;
                 }
 
-            //fileslist.AppendValues(true, value.ToString(),true, value.ToString(),true, value.ToString());
-            fileslist.AppendValues(new object[] { true, filedict["filename"], check_fr, filedict["filename_fr"], check_old, filedict["filename_old"] });
-            
-            //bleau
-            //Gdk.Color bleucolor = _coltexte.CellBackgroundGdk;
-            //bleucolor = new Gdk.Color(153, 255, 255);
-            //_coltexte.CellBackgroundGdk = bleucolor;
-
-
-            _treeviewselect.Model = fileslist;
-
-            //_togglesource.Active = true;
+            if (update)
+            {
+            //select
+            var model = _treeviewselect.Model;
+            Gtk.TreeIter selected;
+            _treeviewselect.Selection.GetSelected(out selected);
+            var value2 = model.GetValue(selected, 8);
+            listfile(value2.ToString(), selected);
+            }
                     
-        }
-
-
-        private void setexiste(bool existe, CellRendererToggle cheched, TextView textview, CellRenderer col)
-        {
-            Gdk.Color colorred = new Gdk.Color(255, 153, 153);
-
-            //cheched.Active = false;
-        
-            if (existe)
-            {
-                colorred = new Gdk.Color(153, 255, 153);
-                textview.Editable = true;
-                //textview.Sensitive = true;
-                //fileslist.SetValue(iter, 0, true);
-            }
-            else
-            {
-                colorred = new Gdk.Color(255, 153, 153);
-                textview.Buffer.Text = "";
-                textview.Editable = false;
-                //textview.Sensitive = false;
-                cheched.Sensitive = false;
-
-            }
-
-            //cheched.CellBackgroundGdk = colorred;
-
-            col.CellBackgroundGdk = colorred;
-
         }
 
         

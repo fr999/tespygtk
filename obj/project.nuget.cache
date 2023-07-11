@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "iOjdL34VthK6R7rLB6/TU/6Ih4SlbOL5zhPbpFxS5FK5KEg/J6RIc2qij33/GCz1bK7k7VT7yRQ1m6fL2fnMRQ==",
+  "dgSpecHash": "FOiviR5tFYLoANZu7EIDyeSwtmOi1xXsCIpKepC57KeYSHVlzhnwMUL1o2oe5GZILX0rWVetAAFpPSkCXral7w==",
   "success": true,
   "projectFilePath": "/home/lordvenom57/Downloads/tespygtk/tespygtk.csproj",
   "expectedPackageFiles": [
@@ -11,7 +11,10 @@
     "/home/lordvenom57/.nuget/packages/glibsharp/3.24.24.95/glibsharp.3.24.24.95.nupkg.sha512",
     "/home/lordvenom57/.nuget/packages/gtksharp/3.24.24.95/gtksharp.3.24.24.95.nupkg.sha512",
     "/home/lordvenom57/.nuget/packages/gtranslate/2.1.6/gtranslate.2.1.6.nupkg.sha512",
-    "/home/lordvenom57/.nuget/packages/pangosharp/3.24.24.95/pangosharp.3.24.24.95.nupkg.sha512"
+    "/home/lordvenom57/.nuget/packages/pangosharp/3.24.24.95/pangosharp.3.24.24.95.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/microsoft.netcore.app.runtime.win-x64/7.0.5/microsoft.netcore.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/microsoft.aspnetcore.app.runtime.win-x64/7.0.5/microsoft.aspnetcore.app.runtime.win-x64.7.0.5.nupkg.sha512",
+    "/home/lordvenom57/.nuget/packages/microsoft.netcore.app.host.win-x64/7.0.5/microsoft.netcore.app.host.win-x64.7.0.5.nupkg.sha512"
   ],
   "logs": []
 }

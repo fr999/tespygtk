@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -39,10 +40,15 @@ namespace tespygtk
         [UI] private ListBox _listerror = null;
         [UI] private Button _btnopenfolder = null;
 
+        //menu top
+        [UI] private MenuItem _menuitemopen = null;
+        [UI] private MenuItem _menuitemquit = null;
         [UI] private MenuItem _btnrpa = null;
         [UI] private MenuItem _toolgeneratelanguage = null;
         [UI] private MenuItem _toolforcelanguage = null;
         [UI] private MenuItem _toollint = null;
+
+        [UI] private MenuItem _menuitemabout = null;
 
 
         [UI] private Button _btnextract = null;
@@ -140,6 +146,9 @@ namespace tespygtk
             builder.Autoconnect(this);
 
             DeleteEvent += Window_DeleteEvent;
+            _menuitemquit.Activated += Window_DeleteEvent2;
+
+            
             _poperror.DeleteEvent += poperror_DeleteEvent;
             _poperror.WindowStateEvent += poperror_Activate;
             _toggleerror.Clicked += _togglepopup_Clicked;
@@ -148,6 +157,7 @@ namespace tespygtk
 
 
             //_button1.Clicked += Button1_Clicked;
+            _menuitemopen.Activated += btnopenfolder_Clicked;
             _btnopenfolder.Clicked += btnopenfolder_Clicked;
 
             _btntabaccueil.Clicked += btntabaccueil_Clicked;
@@ -171,6 +181,8 @@ namespace tespygtk
             _toolgeneratelanguage.Activated += toolgeneratelanguage_Clicked;
             _toollint.Activated += toollint_Clicked;
             _toolforcelanguage.Activated += toolforcelanguage_Clicked;
+
+            _menuitemabout.Activated += menuitemabout_Clicked;
 
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
@@ -261,6 +273,33 @@ namespace tespygtk
         private void Window_DeleteEvent(object sender, DeleteEventArgs a)
         {
             Application.Quit();
+        }
+
+        private void Window_DeleteEvent2(object sender, EventArgs a)
+        {
+            Application.Quit();
+        }
+
+        private void menuitemabout_Clicked(object sender, EventArgs a)
+        {
+            Gtk.AboutDialog dialog = new Gtk.AboutDialog();
+
+            //Gdk.Pixbuf logo = new Gdk.Pixbuf("assets/logo.jpg");
+
+            dialog.Icon = null;
+            dialog.IconName = null;
+            //dialog.Logo = logo;
+            dialog.LogoIconName = "auth-sim-missing-symbolic";
+            dialog.ProgramName = "TesPyGtk";
+            dialog.Version = "0.0.4";
+            dialog.Comments = "Gestion des fichiers de traductions Renpy";
+            dialog.Authors = new string[] {"A_Furbyz"};
+            dialog.Copyright = "F999 Team";
+            dialog.License = "GPLv3";
+            dialog.Website = "https://github.com/fr999/tespygtk";
+            dialog.WebsiteLabel = "Github F999";
+            dialog.Run();
+            dialog.Destroy();
         }
 
         private void OnActionSelect(object sender, EventArgs a)

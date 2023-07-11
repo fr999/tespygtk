@@ -9,8 +9,11 @@ using GTranslate.Translators;
 using System.Threading.Tasks;
 using Gtk;
 
-using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
+//./NekoParadise.sh --lint
 
+//./renpy.sh NekoParadise-0.16-pc-standard-compressed/ translate ital
+
+//./NekoParadise.sh '' translate ital
 
 
 namespace tespygtk
@@ -26,103 +29,9 @@ namespace tespygtk
             Start = _start;
             End = _end;
         }
-    }
+    }    
 
-    public class Zlib
-    {
-
-        
-        /// <summary>
-        /// 解压
-        /// </summary>
-        /// <param name="data">压缩数据</param>
-        /// <returns></returns>
-        public static byte[] Decompress(byte[] data)
-        {
-            MemoryStream compressed = new(data);
-            MemoryStream decompressed = new();
-            InflaterInputStream zlibInput = new(compressed);
-            zlibInput.CopyTo(decompressed);
-            return decompressed.ToArray();
-        }
-    }
-
-    public class UnRpyc
-    {
-        public static string RPYCSignature => "RENPY RPC2";
-        public UnRpyc(string path)
-        {
-            DirectoryInfo dirPathInfo = new(path);
-            FileInfo[] rpycFileInfos = dirPathInfo.GetFiles("*.rpyc", SearchOption.AllDirectories);
-            foreach (FileInfo rpycFileInfo in rpycFileInfos)
-            {
-                UnRpycs(rpycFileInfo.FullName);
-                Console.WriteLine(rpycFileInfo.FullName);
-            }
-        }
-
-        public static void UnRpycs(string path)
-        {
-            using FileStream rpycFS = File.OpenRead(path);
-            using BinaryReader rpycBR = new(rpycFS);
-
-            Span<byte> keys = stackalloc byte[4];
-
-            rpycFS.Seek(48, SeekOrigin.Begin);
-            rpycBR.Read(keys);
-
-            string scriptName = Path.GetFileNameWithoutExtension(path);
-            string extractPath = Path.GetDirectoryName(path) + "\\ScriptExtract\\" + scriptName + "\\";
-
-            //检查文件夹
-            if (Directory.Exists(extractPath) == false)
-            {
-                Directory.CreateDirectory(extractPath);
-            }
-
-
-            rpycFS.Seek(RPYCSignature.Length, SeekOrigin.Begin);
-
-            long tablePosition = rpycFS.Position;
-
-            int slot, start, length;
-
-            while (true)
-            {
-                //读表
-                slot = rpycBR.ReadInt32();
-                start = rpycBR.ReadInt32();
-                length = rpycBR.ReadInt32();
-
-                tablePosition = rpycFS.Position;    //保存当前表位置
-
-                //读取完毕
-                if (slot == 0)
-                {
-                    break;
-                }
-
-                //解密信息
-                start = start ^ keys[0] ^ keys[3];
-                length = length ^ keys[1] ^ keys[2];
-
-                //读取封包
-                byte[] compressedData = ArrayPool<byte>.Shared.Rent(length);
-                rpycFS.Seek(start, SeekOrigin.Begin);
-                rpycBR.Read(compressedData, 0, length);
-
-                //解压导出 
-                byte[] rawData = Zlib.Decompress(compressedData);
-                File.WriteAllBytes(extractPath + slot.ToString() + ".bin", rawData);
-
-                ArrayPool<byte>.Shared.Return(compressedData);  //释放
-                rpycFS.Seek(tablePosition, SeekOrigin.Begin);   //回到下一个表的起始点
-            }
-
-        }
-    }
-
-       public class UnRen2
+public class UnRen2
     {
         string Path;
         string unren_copy;
@@ -313,6 +222,200 @@ namespace tespygtk
                 
             }
             return string.Empty;
+        }
+
+    }
+
+public class Newlangue
+    {
+        string Path;
+
+        string Name;
+        string Langue;
+
+        string process_name;
+
+        string message;
+
+        private ProgressBar Bar = null;
+        
+        public Newlangue(string _path, string _langue, ProgressBar _bar)
+        {
+            this.Path = System.IO.Path.GetDirectoryName(_path);
+            this.Name = System.IO.Path.GetFileName(_path);
+            this.Langue = _langue;
+            this.Bar = _bar;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                process_name = "cmd";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            process_name = "/bin/bash";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            Console.WriteLine("MacOS");
+            //????// 
+            process_name = "/bin/bash";
+            }
+        }   
+        public async void Language()
+        {           
+            var result = await Task.Run(() => Connection());
+            MessageDialog md = new MessageDialog (null, 
+            DialogFlags.DestroyWithParent, MessageType.Warning, 
+            ButtonsType.Ok, message);
+            md.Run();
+            md.Destroy(); 
+        }
+
+        public bool Connection()
+        {
+            ProcessStartInfo start = new ProcessStartInfo()
+            {
+                //./NekoParadise.sh '' translate ital
+                ArgumentList = {$"./{this.Name}", "", "translate", {this.Langue}}
+            };
+            //start.FileName = this.pythonLocations;
+            start.FileName = process_name;
+            start.WorkingDirectory = this.Path;
+            start.WindowStyle = ProcessWindowStyle.Normal;
+            start.UseShellExecute = false;
+            //start.RedirectStandardOutput = true;
+            start.RedirectStandardError = true;
+
+            try
+            {
+            Process process = Process.Start(start);
+            bool inProcess = true;
+            Bar.Fraction = 0.0;
+            while(inProcess)
+            {
+                
+                if (Bar.Fraction >= 1.0)
+                {
+                    Bar.Fraction = 0.0;
+                }
+                else
+                {
+                    Bar.Fraction += 0.1;
+                    System.Threading.Thread.Sleep(200);
+
+                }
+
+                if (process.HasExited)
+                {
+                    Bar.Fraction = 0.0;
+                    inProcess = false;
+                }
+            }
+
+            string stderr = process.StandardError.ReadToEnd();
+            //string stresult = process.StandardOutput.ReadToEnd();
+            //Console.WriteLine(stresult);
+            message = $"Tache Terminée {stderr}";
+            }
+            catch (Exception e)
+            {
+            message = $"Erreur: {e.Message}";
+            }
+            return false;
+        }
+
+    }
+
+
+public class Newlint
+    {
+        string Path;
+
+        string Name;
+
+        string process_name;
+
+        string message;
+
+        private ProgressBar Bar = null;
+        
+        public Newlint(string _path, ProgressBar _bar)
+        {
+            this.Path = System.IO.Path.GetDirectoryName(_path);
+            this.Name = System.IO.Path.GetFileName(_path);
+            this.Bar = _bar;
+
+            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows)) {
+                process_name = "cmd";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux)) {
+            process_name = "/bin/bash";
+            }
+            else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX)) {
+            Console.WriteLine("MacOS");
+            //????// 
+            process_name = "/bin/bash";
+            }
+        }   
+        public async Task<bool> Lint()
+        {           
+            var result = await Task.Run(() => Connection());
+            MessageDialog md = new MessageDialog (null, 
+            DialogFlags.DestroyWithParent, MessageType.Warning, 
+            ButtonsType.Ok, message);
+            md.Run();
+            md.Destroy();
+            return true; 
+        }
+
+        public bool Connection()
+        {
+            ProcessStartInfo start = new ProcessStartInfo()
+            {
+                //./NekoParadise.sh '' translate ital
+                ArgumentList = {$"./{this.Name}", "--lint"}
+            };
+            //start.FileName = this.pythonLocations;
+            start.FileName = process_name;
+            start.WorkingDirectory = this.Path;
+            start.WindowStyle = ProcessWindowStyle.Normal;
+            start.UseShellExecute = false;
+            //start.RedirectStandardOutput = true;
+            start.RedirectStandardError = true;
+
+            try
+            {
+            Process process = Process.Start(start);
+            bool inProcess = true;
+            Bar.Fraction = 0.0;
+            while(inProcess)
+            {
+                
+                if (Bar.Fraction >= 1.0)
+                {
+                    Bar.Fraction = 0.0;
+                }
+                else
+                {
+                    Bar.Fraction += 0.1;
+                    System.Threading.Thread.Sleep(200);
+
+                }
+
+                if (process.HasExited)
+                {
+                    Bar.Fraction = 0.0;
+                    inProcess = false;
+                }
+            }
+
+            string stderr = process.StandardError.ReadToEnd();
+            //string stresult = process.StandardOutput.ReadToEnd();
+            //Console.WriteLine(stresult);
+            message = $"Tache Terminée {stderr}";
+            }
+            catch (Exception e)
+            {
+            message = $"Erreur: {e.Message}";
+            }
+            return false;
         }
 
     }
@@ -536,44 +639,44 @@ namespace tespygtk
                 return string.Empty;
             }
 
-            // try
-            // {
-            // var m1 = Regex.Matches(line, @"""(.*?)""");
-            // //Console.WriteLine(m1[0].Value.ToString().Trim('"'));
-            // line = m1[0].Value.ToString().Trim('"');
-            // }
-            // catch
-            // {
-            //     return string.Empty;
-            // }
-                        bool fQuotesFound = false;
-            int left = 0;
-            int right = line.Length;
-
-            for (int i = 0; i < line.Length; i++)
+            try
             {
-                if (line[i] == '"')
-                {
-                    fQuotesFound = true;
-                    if (left == 0)
-                    {
-                        left = i + 1;
-                    }
-                    else
-                    {
-                        if (i == 0 || line[i - 1] != '\\')
-                        {
-                            right = i;
-                            break;
-                        }
-                    }
-                }
+             var m1 = Regex.Matches(line, @"""(?:\\""|[^""])*""");
+            // //Console.WriteLine(m1[0].Value.ToString().Trim('"'));
+            line = m1[0].Value.ToString().Trim('"');
             }
+            catch
+             {
+                 return string.Empty;
+             }
+            //bool fQuotesFound = false;
+            //int left = 0;
+            //int right = line.Length;
 
-            if (!fQuotesFound)
-                return string.Empty;
+            // for (int i = 0; i < line.Length; i++)
+            // {
+            //     if (line[i] == '"')
+            //     {
+            //         fQuotesFound = true;
+            //         if (left == 0)
+            //         {
+            //             left = i + 1;
+            //         }
+            //         else
+            //         {
+            //             if (i == 0 || line[i - 1] != '\\')
+            //             {
+            //                 right = i;
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
 
-            line = line.Substring(left, right - left);
+            //if (!fQuotesFound)
+            //    return string.Empty;
+
+            //line = line.Substring(left, right - left);
 
             return line;
 

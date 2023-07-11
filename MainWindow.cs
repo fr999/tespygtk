@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Gtk;
 using UI = Gtk.Builder.ObjectAttribute;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Threading;
-
 
 
 //peux etre utile
@@ -40,7 +40,16 @@ namespace tespygtk
         [UI] private ListBox _listerror = null;
         [UI] private Button _btnopenfolder = null;
 
+        //menu top
+        [UI] private MenuItem _menuitemopen = null;
+        [UI] private MenuItem _menuitemquit = null;
         [UI] private MenuItem _btnrpa = null;
+        [UI] private MenuItem _toolgeneratelanguage = null;
+        [UI] private MenuItem _toolforcelanguage = null;
+        [UI] private MenuItem _toollint = null;
+
+        [UI] private MenuItem _menuitemabout = null;
+
 
         [UI] private Button _btnextract = null;
 
@@ -83,8 +92,6 @@ namespace tespygtk
         [UI] private FontButton _btnfont = null;
 
 
-        [UI] private TreeView _treeview = null;
-
         [UI] private TreeView _treeviewselect = null;
 
 
@@ -108,15 +115,6 @@ namespace tespygtk
 
         [UI] private InfoBar _infotexte = null;
 
-        //[UI] private TreeSelection _treeselection = null;
-
-        [UI] private CellRendererText _coltexte = null;
-        [UI] private CellRendererText _colsauv = null;
-
-        //[UI] private CellRendererToggle _togglesource = null;
-        [UI] private CellRendererToggle _toggletexte = null;
-        [UI] private CellRendererToggle _togglesauv = null;
-
         [UI] private ProgressBar _progress  = null;
 
         [UI] private ToggleButton _toggleerror = null;
@@ -135,10 +133,8 @@ namespace tespygtk
 		Stack<string> redoStack;
 
         bool editchange = false;
-
-        private Gtk.ListStore store = new Gtk.ListStore (typeof(string), typeof(string), typeof(string));
         
-        private Gtk.ListStore fileslist = new Gtk.ListStore (typeof(bool), typeof(string), typeof(bool), typeof(string), typeof(bool), typeof(string));
+        private Gtk.ListStore fileslist = new Gtk.ListStore (typeof(string), typeof(string), typeof(bool), typeof(string), typeof (string), typeof(bool), typeof(string), typeof(string), typeof(string));
         //typeof(Gdk.Pixbuf)
 
         string Box_Bracket;
@@ -150,6 +146,9 @@ namespace tespygtk
             builder.Autoconnect(this);
 
             DeleteEvent += Window_DeleteEvent;
+            _menuitemquit.Activated += Window_DeleteEvent2;
+
+            
             _poperror.DeleteEvent += poperror_DeleteEvent;
             _poperror.WindowStateEvent += poperror_Activate;
             _toggleerror.Clicked += _togglepopup_Clicked;
@@ -158,6 +157,7 @@ namespace tespygtk
 
 
             //_button1.Clicked += Button1_Clicked;
+            _menuitemopen.Activated += btnopenfolder_Clicked;
             _btnopenfolder.Clicked += btnopenfolder_Clicked;
 
             _btntabaccueil.Clicked += btntabaccueil_Clicked;
@@ -165,7 +165,7 @@ namespace tespygtk
             _btntabtexte .Clicked += btntabaccueil_Clicked;
             _btntabsauv.Clicked += btntabaccueil_Clicked;
     
-            _treeview.RowActivated += treeselection_RowActivated;
+            _treeviewselect.RowActivated += homeselection_RowActivated;
 
 
             _listerror.ListRowActivated += listerror_ListRowActivated;
@@ -178,6 +178,11 @@ namespace tespygtk
             _btncompile.Clicked += btncompile_Clicked;
 
             _btnrpa.Activated += btnrpa_Clicked;
+            _toolgeneratelanguage.Activated += toolgeneratelanguage_Clicked;
+            _toollint.Activated += toollint_Clicked;
+            _toolforcelanguage.Activated += toolforcelanguage_Clicked;
+
+            _menuitemabout.Activated += menuitemabout_Clicked;
 
             _btnbarsauv.Clicked += btnbarsauv_Clicked;
             _btnselectcara.Clicked += btnselectcara_Cliked;
@@ -268,6 +273,33 @@ namespace tespygtk
         private void Window_DeleteEvent(object sender, DeleteEventArgs a)
         {
             Application.Quit();
+        }
+
+        private void Window_DeleteEvent2(object sender, EventArgs a)
+        {
+            Application.Quit();
+        }
+
+        private void menuitemabout_Clicked(object sender, EventArgs a)
+        {
+            Gtk.AboutDialog dialog = new Gtk.AboutDialog();
+
+            //Gdk.Pixbuf logo = new Gdk.Pixbuf("assets/logo.jpg");
+
+            dialog.Icon = null;
+            dialog.IconName = null;
+            //dialog.Logo = logo;
+            dialog.LogoIconName = "auth-sim-missing-symbolic";
+            dialog.ProgramName = "TesPyGtk";
+            dialog.Version = "0.0.4";
+            dialog.Comments = "Gestion des fichiers de traductions Renpy";
+            dialog.Authors = new string[] {"A_Furbyz"};
+            dialog.Copyright = "F999 Team";
+            dialog.License = "GPLv3";
+            dialog.Website = "https://github.com/fr999/tespygtk";
+            dialog.WebsiteLabel = "Github F999";
+            dialog.Run();
+            dialog.Destroy();
         }
 
         private void OnActionSelect(object sender, EventArgs a)
@@ -669,6 +701,18 @@ namespace tespygtk
                         listOfAlbums.Add(example);
                     }
                 break;
+                    case 3:
+                    //@"goto line"
+
+                    TextIter startline = names.Item1.Buffer.GetIterAtLine(Int32.Parse(text)-1);
+                    TextIter endline =  names.Item1.Buffer.GetIterAtLine(Int32.Parse(text));
+
+       
+                    names.Item1.Buffer.ApplyTag(names.Item3, startline, endline);
+                    names.Item1.ScrollToIter(endline, 0, false, 0, 0);
+
+                
+                break;
 
                 default:
                 break;
@@ -737,46 +781,29 @@ namespace tespygtk
 
         private void btnselectcara_Cliked(object sender, EventArgs a)
         {
-            //Console.WriteLine(_entrymaxcara.Text);
             Gtk.TextIter start;
             Gtk.TextIter end;
 
-    
-           //change cursor position
-           //textView.Buffer.PlaceCursor(textView.Buffer.EndIter).
-           // try 
-            //{
             var names = Lookup();
-            string max = _entrymaxcara.Text;
-
-            //var start2 = names.Item1.Buffer.CursorPosition;
+            int max = 1000;
+            try 
+            {
+            max = int.Parse(_entrymaxcara.Text);
+            }
+            catch
+            {
+                return;
+            }
 
             names.Item1.Buffer.GetSelectionBounds(out start, out end);
 
             names.Item1.GrabFocus();
-            //start = names.Item1.Buffer.CursorPosition;
-            end = names.Item1.Buffer.GetIterAtOffset(end.Offset + 3000);
+            end = names.Item1.Buffer.GetIterAtOffset(end.Offset + max);
             end.BackwardChars(end.LineOffset); 
 
-            //end = end.CharsInLine;
-            //end.CharsInLine = 3000;
             string text = names.Item1.Buffer.GetText(start, end, true);
-
-            //TextMark startMark = buffer.CreateMark("start", start, false);
-            //TextMark endMark   = buffer.CreateMark("end", end, true);
-            //TextIter start3 = buffer.GetIterAtMark(startMark);
-            //TextIter end3   = buffer.GetIterAtMark(endMark)
-            //names.Item1.Buffer.PlaceCursor(end);
             names.Item1.Buffer.SelectRange(start, end);
             names.Item1.ScrollToIter(end, 0, false, 0, 0);
-            
-
-            //Console.WriteLine(text);
-            //}
-            //catch 
-            //{
-
-            //}
 
         }
 
@@ -872,6 +899,25 @@ namespace tespygtk
         private void btnextract_Clicked(object sender, EventArgs a)
         {
 
+            if (System.IO.File.Exists(filedict["file_fr"]))
+            {
+
+                MessageDialog md = new MessageDialog (
+                    this, 
+                    DialogFlags.DestroyWithParent, 
+                    MessageType.Warning, 
+                    ButtonsType.OkCancel, 
+                    String.Format("Le fichier {0} existe\nVoulez-vous l'ecraser.",  filedict["filename_fr"]));
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                md.Destroy();
+
+            if (res == ResponseType.Cancel)
+            {
+                md.Destroy();
+                return;
+            }
+            }
+
             System.IO.StreamWriter output = new System.IO.StreamWriter(filedict["file_fr"]);
 
             var dictionary = System.IO.File.ReadAllLines(filedict["file"]);
@@ -880,57 +926,81 @@ namespace tespygtk
             int total = dictionary.Length;
 
             int cnt=1;
-            foreach (string line in dictionary)
-                {
-                    string newline = Util.ParseRpyLine(line);
-                    double calc = cnt/total;
-                    _progress.Fraction = Math.Floor(calc);
-                    cnt++;
-                    if (newline != string.Empty)
+
+            MessageDialog md2 = new MessageDialog (this, 
+            DialogFlags.DestroyWithParent, MessageType.Info, 
+            ButtonsType.Ok,"");
+
+            try
+            {
+                foreach (string line in dictionary)
                     {
-                        output.WriteLine(newline);
-                        //Console.WriteLine(line);
+                        string newline = Util.ParseRpyLine(line);
+                        double calc = cnt/total;
+                        _progress.Fraction = Math.Floor(calc);
+                        cnt++;
+                        if (newline != string.Empty)
+                        {
+                            output.WriteLine(newline);
+                            //Console.WriteLine(line);
+                        }
+
                     }
+                    _progress.Fraction = 0;
+                    output.Close();
+                    md2.Text = String.Format("Fichier Créer avec Succée {0}.",  filedict["filename_fr"]);
 
-                }
-                _progress.Fraction = 0;
-                output.Close();
+            }
+            catch(Exception exp)  
+            {  
+                //Console.Write(exp.Message);
+                md2.Text = String.Format("Erreur {0}.",  exp.Message);
 
-                MessageDialog md = new MessageDialog (this, 
-                DialogFlags.DestroyWithParent, MessageType.Info, 
-                ButtonsType.Ok,"");
+            } 
 
-            if (System.IO.File.Exists(filedict["file_fr"]))
-                {
-                    md.Text = String.Format("Fichier Créer avec Succée {0}.",  filedict["filename_fr"]);
-        
-                }
-                else 
-                {
-                    md.Text = String.Format("Erreur Impossible de trouver {0}.",  filedict["filename_fr"]);
+            md2.Run();
+            md2.Destroy();
 
-                }
-
-                md.Run();
-                md.Destroy();
-
-                treeselection_Update();
+            treeselection_write(true);
 
         }
 
         private void btncompile_Clicked(object sender, EventArgs a)
         {
+
+            if (System.IO.File.Exists(filedict["file_old"]))
+            {
+
+                MessageDialog md = new MessageDialog (
+                    this, 
+                    DialogFlags.DestroyWithParent, 
+                    MessageType.Warning, 
+                    ButtonsType.OkCancel, 
+                    String.Format("Le fichier {0} existe\nVoulez-vous l'ecraser.",  filedict["filename_old"]));
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                md.Destroy();
+
+            if (res == ResponseType.Cancel)
+            {
+                md.Destroy();
+                return;
+            }
+            else 
+            {
+                System.IO.File.Delete(filedict["file_old"]);
+            }
+            }
             //copie
             try 
             {
-                System.IO.File.Copy(filedict["file"], filedict["file_old"]);
+                System.IO.File.Copy(filedict["file"], filedict["file_old"], true);
 
             }
-            catch 
+            catch(Exception exp)
             {
                 MessageDialog md1 = new MessageDialog (this, 
                 DialogFlags.DestroyWithParent, MessageType.Error, 
-                ButtonsType.Ok, String.Format("Erreur Impossible de créer {0}.",  filedict["file_old"]));
+                ButtonsType.Ok, String.Format("Erreur Impossible de créer {0}.{1}",  filedict["file_old"], exp.Message));
                 md1.Run();
                 md1.Destroy();
                 return;
@@ -943,61 +1013,231 @@ namespace tespygtk
 
             int cnt=1;
 
-            System.IO.StreamReader reader = new System.IO.StreamReader(filedict["file_fr"]);
+            MessageDialog md2 = new MessageDialog (this, 
+            DialogFlags.DestroyWithParent, MessageType.Info, 
+            ButtonsType.Ok,"");
 
-            using (System.IO.StreamWriter output = new System.IO.StreamWriter(filedict["file"]))
+            try 
             {
-                foreach (string line in dictionary)
+
+                System.IO.StreamReader reader = new System.IO.StreamReader(filedict["file_fr"]);
+
+                using (System.IO.StreamWriter output = new System.IO.StreamWriter(filedict["file"]))
                 {
-                    string newline = Util.ParseRpyLine(line);
-                    double calc = cnt/total;
-                    _progress.Fraction = Math.Floor(calc);
-                    cnt++;
-                    if (newline != string.Empty)
+                    foreach (string line in dictionary)
                     {
-                        var replaceline = line.Replace(newline, reader.ReadLine());
-                        output.WriteLine(replaceline);
+                        string newline = Util.ParseRpyLine(line);
+                        double calc = cnt/total;
+                        _progress.Fraction = Math.Floor(calc);
+                        cnt++;
+                        if (newline != string.Empty)
+                        {
+                            var replaceline = line.Replace(newline, reader.ReadLine());
+                            output.WriteLine(replaceline);
+
+                        }
+                        else 
+                        {
+                            output.WriteLine(line);
+
+                        }
 
                     }
-                    else 
-                    {
-                        output.WriteLine(line);
-
-                    }
-
                 }
+
+                md2.Text = String.Format("Fichier Créer avec Succé et Sauvegardé {0}/{1}.",  filedict["filename"], filedict["filename_old"]);
+
             }
+            catch(Exception exp)  
+            {  
+                //Console.Write(exp.Message);
+                md2.Text = String.Format("Erreur {0}.", exp.Message);
+  
+            } 
 
-            //System.IO.File.WriteAllLines(filedict["file"], dictionary);
+            _progress.Fraction = 0;
 
+            md2.Run();
+            md2.Destroy();
 
-                _progress.Fraction = 0;
+            treeselection_write(true);
+            
+        }
+
+        private void toolforcelanguage_Clicked(object sender, EventArgs a)
+        {
+            string folder = string.Empty;
+            string message = string.Empty;
+
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le dossier tl", null,
+            FileChooserAction.SelectFolder,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Label winlabel = new Label("Sélectionner le dossier langue à forcer ex:game/tl/french");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
+            
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.CurrentFolder;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+            if (folder != string.Empty)
+            {
+                try 
+                {
+                    string name = System.IO.Path.GetFileName(folder);
+                    string newfile = System.IO.Path.Join(folder, $"_{name}.rpy");
+                    string someText = $"define config.language = \"{name}\"\ninit offset = 100";
+                    System.IO.StreamWriter output = new System.IO.StreamWriter(newfile);
+                    output.Write(someText);
+                    output.Close();
+                    message = $"Fichier créer avec succée: {newfile}";
+                } 
+                catch(Exception e)
+                {
+                    //Console.WriteLine(e.Message);
+                    message = e.Message;
+                }
 
                 MessageDialog md = new MessageDialog (this, 
                 DialogFlags.DestroyWithParent, MessageType.Info, 
-                ButtonsType.Ok,"");
-
-            if (System.IO.File.Exists(filedict["file_old"]))
-                {
-                    md.Text = String.Format("Fichier Créer avec Succé et Sauvegardé {0}/{1}.",  filedict["filename"], filedict["filename_old"]);
-        
-                }
-                else 
-                {
-                    md.Text = String.Format("Erreur Impossible de trouver {0}.",  filedict["filename_old"]);
-
-                }
-
+                ButtonsType.Ok, message);
                 md.Run();
                 md.Destroy();
+            }
 
-                treeselection_Update();
+        }
+
+        private async void toollint_Clicked(object sender, EventArgs a)
+        {
+            string folder = string.Empty;
+
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le fichier executable du jeux", null,
+            FileChooserAction.Open,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Label winlabel = new Label("Sélectionner l'executable pour votre system: .sh Linux / .exe Windows");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
+            FileFilter filter = new FileFilter();
+            filter.AddPattern("*.exe");
+            filter.AddPattern("*.sh");
+            filechooser.AddFilter(filter);
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
             
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.Filename;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+
+
+            if (folder != string.Empty)
+            {
+                Newlint test = new Newlint(folder, _progress);            
+                //test.Lint();
+                var result = await test.Lint();
+
+                string lintfile = System.IO.Path.Join(System.IO.Path.GetDirectoryName(folder), "log.txt");
+                if (System.IO.File.Exists(lintfile))
+                {
+                    
+                    Dialog md = new Dialog ();
+                    md.SetSizeRequest(600, 400);
+
+                    ScrolledWindow scroll = new ScrolledWindow();
+                    TextView viewtexte = new TextView();
+                    viewtexte.LeftMargin = 10;
+                    viewtexte.RightMargin = 10;
+                    viewtexte.TopMargin = 10;
+                    viewtexte.BottomMargin = 10;
+
+                    System.IO.StreamReader stream = new System.IO.StreamReader(lintfile);
+				    viewtexte.Buffer.Text = stream.ReadToEnd();
+                    scroll.Add(viewtexte);
+                    md.ContentArea.PackStart (scroll, true, true, 10);
+                    md.ShowAll();
+                    //Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                    //md.Destroy();
+                }
+                
+            }
+
+        }
+
+        private void toolgeneratelanguage_Clicked(object sender, EventArgs a)
+        {
+            string folder = string.Empty;
+            string newlangue = string.Empty;
+
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le fichier executable du jeux", null,
+            FileChooserAction.Open,
+            "Cancel",ResponseType.Cancel,
+            "Open",ResponseType.Accept);
+            //filechooser.Run();
+            Label winlabel = new Label("Sélectionner l'executable du jeux pour votre system: .sh Linux / .exe Windows");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
+            FileFilter filter = new FileFilter();
+            filter.AddPattern("*.exe");
+            filter.AddPattern("*.sh");
+            filechooser.AddFilter(filter);
+            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
+            
+            if (dialog == ResponseType.Accept) 
+            {
+                folder = filechooser.Filename;
+            }
+            else
+            {
+                filechooser.Destroy();
+                return;
+            }
+            filechooser.Destroy();
+
+
+            if (folder != string.Empty)
+            {
+                MessageDialog md = new MessageDialog (this, 
+                DialogFlags.DestroyWithParent, MessageType.Warning, 
+                ButtonsType.Ok, "Langue de la traduction ex:french/english");
+
+                Entry entrylangue = new Entry("french");
+                md.ContentArea.PackStart (entrylangue, true, false, 10);
+                md.ShowAll();
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                if (res == ResponseType.Ok) 
+                {
+                    newlangue = entrylangue.Text;
+                }
+                md.Destroy();
+                if (newlangue != string.Empty)
+                {
+                    Newlangue test = new Newlangue(folder, newlangue, _progress);            
+                    test.Language();
+                    //Console.WriteLine("passssss");
+                }
+            }
+
         }
 
         private void btnrpa_Clicked(object sender, EventArgs a)
         {
-            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le dossier racine du jeux", this,
             FileChooserAction.SelectFolder,
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
@@ -1038,79 +1278,29 @@ namespace tespygtk
                 //listerror = test.list;
             }
 
-        }
-
-      private void btnrpyc_Clicked(object sender, EventArgs a)
-        {
-            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
-            FileChooserAction.SelectFolder,
-            "Cancel",ResponseType.Cancel,
-            "Open",ResponseType.Accept);
-            //filechooser.Run();
-            Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
-            
-            string folder = string.Empty;
-
-            if (dialog == ResponseType.Accept) 
-            {
-                folder = filechooser.CurrentFolder;
-            }
-            else
-            {
-                filechooser.Destroy();
-                return;
-            }
-            filechooser.Destroy();
-
-
-            if (folder != string.Empty)
-            {
-
-                _progress.Fraction = 0;
-                UnRpyc test = new UnRpyc(folder);
-                //Thread t = new Thread(new ThreadStart(test.UnRen));
-                //test.UnRen();            
-                //test.UnRen();
-
-                //Task task = test.UnRen();
-                //await Task.Run(() => test.UnRen()).ContinueWith(t => taskend = false);                        
-                
-                //listerror = test.list;
-            }
-
-        }
-        
+        }        
 
         private void btnopenfolder_Clicked(object sender, EventArgs a)
         {
 
-            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Choose the file to open", this,
+            Gtk.FileChooserDialog filechooser = new Gtk.FileChooserDialog("Sélectionner le dossier langue", this,
             FileChooserAction.SelectFolder,
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
+            Label winlabel = new Label("Sélectionner le dossier langue ex:game/tl/french");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
 
             if (filechooser.Run() == (int)ResponseType.Accept) 
             {
                 //efface listore
-                store.Clear();
-
-                //System.IO.FileStream file = System.IO.File.OpenRead(filechooser.CurrentFolder);
-                //System.IO.Directory.SetCurrentDirectory(filechooser.CurrentFolder);
-                //string folder = Path.GetDirectoryName( file );
-                System.IO.Directory.CreateDirectory(filechooser.CurrentFolder);
-                //string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder);
+                fileslist.Clear();
+                /////System.IO.Directory.CreateDirectory(filechooser.CurrentFolder);
                 string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder, "*.rpy", System.IO.SearchOption.AllDirectories);
                 Array.Sort(files);
 
                 _txtfolder.Text = filechooser.CurrentFolder;
-                _txtnbfolder.Text = files.Length.ToString();
-		        //string[] directories = System.IO.Directory.GetDirectories(filechooser.CurrentFolder);
-                //Gtk.TreeViewColumn pathColumn = new Gtk.TreeViewColumn ();
-                //pathColumn.Title = "Path";
-                //_treeview.AppendColumn( pathColumn );
-
-                //var pathListStore = new Gtk.ListStore( typeof( string ) );
-                //_treeview.Model = liststore7;
+                _txtnbfolder.Text = string.Format($"Nbs de fichiers: {files.Length.ToString()}");
 
 
                 foreach (string file in files)
@@ -1121,22 +1311,10 @@ namespace tespygtk
 
                     string lenght = Util.GetFileSize(file);
 
-                    
-                    //System.IO.File.Move(file, targetPath);
-                    //Console.WriteLine(length);
-                    //store.AppendValues(fileName, lenght, file);
-
-                    store.AppendValues(new object[] { fileName, lenght, file });
-                    //liststore7.AppendValues(fileName, lenght, file);
+                    listfile(file, TreeIter.Zero);
                     
                 }
 
-                store.SetSortColumnId(0, Gtk.SortType.Ascending);
-                _treeview.Model = store;
-
-
-                //Console.WriteLine(test);
-                //file.Close();
             }
 
 
@@ -1144,6 +1322,73 @@ namespace tespygtk
             //Console.WriteLine(this._btnopenfolder[]file);
                     
         }
+
+        private void listfile(string file, TreeIter iter)
+        {
+            filedict = Util.getDictFile(file);
+            string lenght = Util.GetFileSize(file);
+            bool check_fr = false;
+            bool check_old = false;
+            string file_fr = string.Empty;
+            string file_old = string.Empty;
+            string color1 = null;
+            string color2 = null;
+
+            // if (System.IO.File.Exists(filedict["file"]))
+            //     {
+
+            //     }
+            if (System.IO.File.Exists(filedict["file_fr"]))
+                {
+                    check_fr = true;
+                    file_fr = filedict["filename_fr"];
+                    color1 = "LightGreen";
+                }
+
+            if (System.IO.File.Exists(filedict["file_old"]))
+                {
+                    check_old = true;
+                    file_old = filedict["filename_old"];
+                    color2 = "LightGreen";
+                    //LightCoral
+                }
+            if (iter.Equals(TreeIter.Zero))
+            {
+            fileslist.AppendValues(new object[] {lenght, filedict["filename"], check_fr, file_fr, color1, check_old, file_old, color2, file });
+            }
+            else
+            {
+            fileslist.SetValues(iter, new object[] {lenght, filedict["filename"], check_fr, file_fr, color1, check_old, file_old, color2, file });
+            }
+            //fileslist.SetValues(iter, )
+            _treeviewselect.Model = fileslist;
+            fileslist.SetSortColumnId(1, Gtk.SortType.Ascending);
+
+            
+        }
+
+        private void homeselection_RowActivated(object sender, RowActivatedArgs args)
+        {
+            if (editchange) {
+                bool res = msg_sure();
+                if (!res){
+                    return;
+                }
+                _infotexte.Visible = false;
+                editchange = false;
+            }
+            
+            //select
+            var model = _treeviewselect.Model;
+            Gtk.TreeIter selected;
+            _treeviewselect.Selection.GetSelected(out selected);
+            var value2 = model.GetValue(selected, 8);
+
+            filedict = Util.getDictFile(value2.ToString());
+
+            treeselection_write(false);       
+        }
+
 
         public bool msg_sure() 
         {
@@ -1162,6 +1407,7 @@ namespace tespygtk
             {
                 return false;
             }
+            
         }
 
         private void treeselection_RowActivated(object sender, RowActivatedArgs args)
@@ -1177,9 +1423,9 @@ namespace tespygtk
 
             }
             //select
-            var model = _treeview.Model;
+            var model = _treeviewselect.Model;
             Gtk.TreeIter selected;
-            _treeview.Selection.GetSelected(out selected);
+            _treeviewselect.Selection.GetSelected(out selected);
             var value2 = model.GetValue(selected, 2);
             var value = model.GetValue(selected, 0);
 
@@ -1187,25 +1433,67 @@ namespace tespygtk
 
             filedict = Util.getDictFile(value2.ToString());
 
+            Console.WriteLine(value2.ToString());
 
-            treeselection_Update();
-        }
+            treeselection_write(false);
+        }   
+
+    	private void OnWidgetDrawn (object o, DrawnArgs args) {
 
 
-        private void treeselection_Update()
+        TextView textView = o as TextView;      
+        Cairo.Context cr = args.Cr;
+
+        //var parent = textView.Parent as ScrolledWindow;
+
+      
+    	/* Draw text */
+		Gdk.CairoHelper.SetSourceRgba(cr, StyleContext.GetColor (StateFlags.Link));
+        Pango.Layout textLayout = new Pango.Layout(textView.PangoContext);
+        //textLayout.Alignment = Pango.Alignment.Right;
+        textLayout.FontDescription = Pango.FontDescription.FromString (_btnfont.FontName);
+    	int infoCount = textView.Buffer.LineCount;
+        //taille fenetre
+        int minVisibleY = textView.VisibleRect.Top;
+   		int maxVisibleY = textView.VisibleRect.Bottom;
+
+        //visible start et end iters
+   		TextIter startIter, endIter;
+   		int lineTop;
+    	textView.GetLineAtY(out startIter, minVisibleY, out lineTop);
+    	textView.GetLineAtY(out endIter, maxVisibleY, out lineTop);
+        int startLine = startIter.Line;
+        int endLine = endIter.Line;
+
+        List<string> listnum = new List<string>();
+
+
+    	for (int i = startLine ; i <= endLine ; i++) {
+            listnum.Add(i.ToString());
+		}
+
+        textLayout.SetText(String.Join("\n", listnum));
+        cr.MoveTo(5, 10);
+        int textLayoutWidth, textLayoutHeight;
+        textLayout.GetPixelSize(out textLayoutWidth, out textLayoutHeight);
+        
+
+        Pango.CairoHelper.ShowLayout(cr, textLayout); 
+
+        /* text view's left margin */
+        textView.SetBorderWindowSize(TextWindowType.Left, textLayoutWidth + 10);
+
+		//cr.GetTarget().Dispose();
+		//cr.Dispose();
+        cr.Stroke();
+
+    }
+        private void treeselection_write(bool update)
         {
-
-            fileslist.Clear();
-            
-            bool check_source = false;
-            bool check_fr = false;
-            bool check_old = false;
 
             //new Gdk.Pixbuf("assets/report.png")
             if (System.IO.File.Exists(filedict["file"]))
-                {
-                    check_source = true;
-                    
+                {                    
                     System.IO.StreamReader stream = new System.IO.StreamReader(filedict["file"]);
 				    _textviewsource.Buffer.Text = stream.ReadToEnd();
                     _textviewsource.Editable = true;
@@ -1213,21 +1501,7 @@ namespace tespygtk
 
                     //_textviewsource.ModifyFont(Pango.FontDescription.FromString ("Comic Sans MS 40"));
                     _textviewsource.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
-
-                    
-                    //string fontName = _btnfont.FontName;
-                    //Pango.FontDescription fontDescription = Pango.FontDescription.FromString(fontName);
-
-                    //_textviewsource.Add(fontDescription);
-                    //_textviewsource.Buffer.Text = "testttt";
-                    //sw.Write(_textviewsource.Buffer.Text);
-                    //sw.Close();
-                    //string text = _textviewsource.Buffer.Text;
-                    //int lines = text.Split('\n').Length;
-                    //msg = String.Format("This {0}.  The value is {1}.",  lines,  text.Length);
-
-                    
-
+                
                 }
             else
                 {
@@ -1247,87 +1521,50 @@ namespace tespygtk
 
             if (System.IO.File.Exists(filedict["file_fr"]))
                 {
-                    check_fr = true;
-                    //coltexte = new Gdk.Color(153, 255, 153);
-                    setexiste(true, _toggletexte, _textviewtexte, _coltexte);
 
                     System.IO.StreamReader stream = new System.IO.StreamReader(filedict["file_fr"]);
 				    _textviewtexte.Buffer.Text = stream.ReadToEnd();
-                    //_textviewtexte.Editable = true;
-                    //_textviewtexte.Sensitive = true;
+                    _textviewtexte.Editable = true;
+                    _textviewtexte.Sensitive = true;
                     _textviewtexte.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
 
 
                 }
-            else
+            else 
                 {
-                    //Console.WriteLine("textee nonono");
-                    setexiste(false, _toggletexte, _textviewtexte, _coltexte);                
-                    
+
+                    _textviewtexte.Buffer.Text = "";
+                    _textviewtexte.Editable = false;
+                    _textviewtexte.Sensitive = false;
                 }
             if (System.IO.File.Exists(filedict["file_old"]))
                 {
-                    check_old = true;
-                    //colsauv = new Gdk.Color(153, 255, 153);
-                    setexiste(true, _togglesauv, _textviewsauv, _colsauv);
 
                      System.IO.StreamReader stream = new System.IO.StreamReader(filedict["file_old"]);
 				    _textviewsauv.Buffer.Text = stream.ReadToEnd();
-                    //_textviewsauv.Editable = true;
-                    //_textviewsauv.Sensitive = true;
+                    _textviewsauv.Editable = true;
+                    _textviewsauv.Sensitive = true;
                     _textviewsauv.ModifyFont(Pango.FontDescription.FromString (_btnfont.FontName));
 
                         
                 }
             else
                 {
-                    //Console.WriteLine("sauv nonono");
-                    setexiste(false, _togglesauv, _textviewsauv, _colsauv);   
+                _textviewsauv.Buffer.Text = "";
+                _textviewsauv.Editable = false;
+                _textviewsauv.Sensitive = false;
                 }
 
-            //fileslist.AppendValues(true, value.ToString(),true, value.ToString(),true, value.ToString());
-            fileslist.AppendValues(new object[] { true, filedict["filename"], check_fr, filedict["filename_fr"], check_old, filedict["filename_old"] });
-            
-            //bleau
-            //Gdk.Color bleucolor = _coltexte.CellBackgroundGdk;
-            //bleucolor = new Gdk.Color(153, 255, 255);
-            //_coltexte.CellBackgroundGdk = bleucolor;
-
-
-            _treeviewselect.Model = fileslist;
-
-            //_togglesource.Active = true;
+            if (update)
+            {
+            //select
+            var model = _treeviewselect.Model;
+            Gtk.TreeIter selected;
+            _treeviewselect.Selection.GetSelected(out selected);
+            var value2 = model.GetValue(selected, 8);
+            listfile(value2.ToString(), selected);
+            }
                     
-        }
-
-
-        private void setexiste(bool existe, CellRendererToggle cheched, TextView textview, CellRenderer col)
-        {
-            Gdk.Color colorred = new Gdk.Color(255, 153, 153);
-
-            //cheched.Active = false;
-        
-            if (existe)
-            {
-                colorred = new Gdk.Color(153, 255, 153);
-                textview.Editable = true;
-                //textview.Sensitive = true;
-                //fileslist.SetValue(iter, 0, true);
-            }
-            else
-            {
-                colorred = new Gdk.Color(255, 153, 153);
-                textview.Buffer.Text = "";
-                textview.Editable = false;
-                //textview.Sensitive = false;
-                cheched.Sensitive = false;
-
-            }
-
-            //cheched.CellBackgroundGdk = colorred;
-
-            col.CellBackgroundGdk = colorred;
-
         }
 
         

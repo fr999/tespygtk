@@ -9,8 +9,7 @@
       "tespygtk/1.0.0": {
         "dependencies": {
           "GTranslate": "2.1.6",
-          "GtkSharp": "3.24.24.95",
-          "SharpZipLib": "1.4.1"
+          "GtkSharp": "3.24.24.95"
         },
         "runtime": {
           "tespygtk.dll": {}
@@ -103,14 +102,6 @@
             "fileVersion": "3.24.24.95"
           }
         }
-      },
-      "SharpZipLib/1.4.1": {
-        "runtime": {
-          "lib/net6.0/ICSharpCode.SharpZipLib.dll": {
-            "assemblyVersion": "1.4.1.12",
-            "fileVersion": "1.4.1.12"
-          }
-        }
       }
     }
   },
@@ -175,13 +166,6 @@
       "sha512": "sha512-H7JeyEvLsgvsbamGpRgoNtdvzPiGwwsUuoeTobN1C/JRjw1J8Snw0yf2WBr7CKx5GLwbrwpQYOb7N/HD17ME8A==",
       "path": "pangosharp/3.24.24.95",
       "hashPath": "pangosharp.3.24.24.95.nupkg.sha512"
-    },
-    "SharpZipLib/1.4.1": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-X8QiHZS7+bbZy85LfpKCAL9oh0yZkiiecWhQL5F1Yn1AKFDYiOzR3UG5vI+9bDYGRGyseVdMW5sTH8mv8LXF1g==",
-      "path": "sharpziplib/1.4.1",
-      "hashPath": "sharpziplib.1.4.1.nupkg.sha512"
     }
   }
 }

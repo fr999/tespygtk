@@ -641,7 +641,8 @@ public class Newlint
 
             try
             {
-             var m1 = Regex.Matches(line, @"""(?:\\""|[^""])*""");
+             var m1 = Regex.Matches(line, @"""(?:\\""|[^""]).+""");
+             //""(?:\\""|[^""])*""
             // //Console.WriteLine(m1[0].Value.ToString().Trim('"'));
             line = m1[0].Value.ToString().Trim('"');
             }

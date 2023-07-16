@@ -527,17 +527,17 @@ public class Newlint
             //violet A33E50
             //rose B13C52
 
-            TextTag tag_search_source = addtab("tag_search_source", "#758EA4", "white");
-            TextTag tag_search_texte = addtab("tag_search_texte", "#758EA4", "white");
-            TextTag tag_search_sauv = addtab("tag_search_sauv", "#758EA4", "white");
+            TextTag tag_search_source = addtab("tag_search_source", "#ADD8E6", "white");
+            TextTag tag_search_texte = addtab("tag_search_texte", "#ADD8E6", "white");
+            TextTag tag_search_sauv = addtab("tag_search_sauv", "#ADD8E6", "white");
 
             source.Buffer.TagTable.Add(tag_search_source);
             texte.Buffer.TagTable.Add(tag_search_texte);
             sauv.Buffer.TagTable.Add(tag_search_sauv);
 
-            TextTag tag_error_source = addtab("tag_error_source", "#DC3122", "white");
-            TextTag tag_error_texte = addtab("tag_error_texte", "#DC3122", "white");
-            TextTag tag_error_sauv = addtab("tag_error_sauv", "#DC3122", "white");
+            TextTag tag_error_source = addtab("tag_error_source", "#F08080", "white");
+            TextTag tag_error_texte = addtab("tag_error_texte", "#F08080", "white");
+            TextTag tag_error_sauv = addtab("tag_error_sauv", "#F08080", "white");
 
             source.Buffer.TagTable.Add(tag_error_source);
             texte.Buffer.TagTable.Add(tag_error_texte);
@@ -559,7 +559,7 @@ public class Newlint
     {
         var Tag = new TextTag (name);
         Tag.Background = background;
-        Tag.Foreground = foreground;
+        //Tag.Foreground = foreground;
         Tag.Weight = Pango.Weight.Bold;
         return Tag;
     }

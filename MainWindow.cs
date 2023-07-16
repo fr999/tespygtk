@@ -796,10 +796,15 @@ namespace tespygtk
             }
 
             names.Item1.Buffer.GetSelectionBounds(out start, out end);
+            if(start.EndsLine()) 
+            {
+                start.ForwardChars(1);
+            }
 
             names.Item1.GrabFocus();
             end = names.Item1.Buffer.GetIterAtOffset(end.Offset + max);
-            end.BackwardChars(end.LineOffset); 
+            end.BackwardChars(end.LineOffset);
+            end.BackwardChars(1);
 
             string text = names.Item1.Buffer.GetText(start, end, true);
             names.Item1.Buffer.SelectRange(start, end);
@@ -1408,35 +1413,7 @@ namespace tespygtk
                 return false;
             }
             
-        }
-
-        private void treeselection_RowActivated(object sender, RowActivatedArgs args)
-        {
-            if (editchange) {
-
-                bool res = msg_sure();
-                if (!res){
-                    return;
-                }
-                _infotexte.Visible = false;
-                editchange = false;
-
-            }
-            //select
-            var model = _treeviewselect.Model;
-            Gtk.TreeIter selected;
-            _treeviewselect.Selection.GetSelected(out selected);
-            var value2 = model.GetValue(selected, 2);
-            var value = model.GetValue(selected, 0);
-
-            _txtselfile.Text = value2.ToString();
-
-            filedict = Util.getDictFile(value2.ToString());
-
-            Console.WriteLine(value2.ToString());
-
-            treeselection_write(false);
-        }   
+        }  
 
     	private void OnWidgetDrawn (object o, DrawnArgs args) {
 

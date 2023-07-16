@@ -420,44 +420,6 @@ public class Newlint
 
     }
 
-    public class Edit
-    {
-
-        private TextView textView = null;
-
-        private TextTag tag_search_source = new TextTag("tag_search_source");
-        public string Name {get;set;}
-        public TextIter Start {get;set;}
-        public TextIter End {get; set;}
-        public Edit(TextView textView)
-        {
-            this.textView = textView;
-
-            tag_search_source.Background = "#758EA4";
-            tag_search_source.Foreground = "white";
-            tag_search_source.Weight = Pango.Weight.Bold;
-
-            this.textView.Buffer.TagTable.Add(tag_search_source);
-
-        }
-        public TextView TextView {
-		get { return textView; }
-	    }
-
-        public TextBuffer TextBuffer {
-		get { return TextView.Buffer; }
-	    }
-
-        public void ReplaceSelection (string replacement) 
-        {
-            TextBuffer buffer = this.textView.Buffer;
-            buffer.BeginUserAction();
-            buffer.DeleteSelection(true, true);
-            buffer.InsertAtCursor(replacement);
-            buffer.EndUserAction();
-        }
-    }
-
     class Util
     {        
         //public static Dictionary<string, string> filedict = new Dictionary<string, string>();//this line is added.
@@ -556,28 +518,6 @@ public class Newlint
             }
             return "0 Ko";
         }
-        public static bool Rpa(string FilePath)
-        {
-            System.IO.Directory.CreateDirectory(FilePath);
-                //string[] files = System.IO.Directory.GetFiles(filechooser.CurrentFolder);
-            string[] files = System.IO.Directory.GetFiles(FilePath, "*.rpa", System.IO.SearchOption.AllDirectories);
-            Array.Sort(files);
-
-            foreach (string file in files)
-            {
-                string fileName = System.IO.Path.GetFileName(file);
-                string targetPath = System.IO.Path.Combine(FilePath, fileName);
-                //long length = new System.IO.FileInfo(file).Length;
-
-                //string lenght = Util.rpafile(file);
-
-                //System.IO.File.Move(file, targetPath);
-                //Console.WriteLine(length);
-
-                    
-            }
-            return true;
-        }
 
     public static void addTabs(TextView source, TextView texte, TextView sauv) 
     {
@@ -650,34 +590,6 @@ public class Newlint
              {
                  return string.Empty;
              }
-            //bool fQuotesFound = false;
-            //int left = 0;
-            //int right = line.Length;
-
-            // for (int i = 0; i < line.Length; i++)
-            // {
-            //     if (line[i] == '"')
-            //     {
-            //         fQuotesFound = true;
-            //         if (left == 0)
-            //         {
-            //             left = i + 1;
-            //         }
-            //         else
-            //         {
-            //             if (i == 0 || line[i - 1] != '\\')
-            //             {
-            //                 right = i;
-            //                 break;
-            //             }
-            //         }
-            //     }
-            // }
-
-            //if (!fQuotesFound)
-            //    return string.Empty;
-
-            //line = line.Substring(left, right - left);
 
             return line;
 

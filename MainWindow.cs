@@ -52,12 +52,8 @@ namespace tespygtk
 
 
         [UI] private Button _btnextract = null;
-
         [UI] private Button _btntranslate = null;
-
         [UI] private Button _btncompile = null;
-
-
 
         [UI] private Button _btnbarsauv = null;
 
@@ -849,6 +845,9 @@ namespace tespygtk
 
         private void btntabaccueil_Clicked(object sender, EventArgs a)
         {
+            if(msg_sure()){
+                return;
+            }
 
             Button btn = sender as Button;
 
@@ -1247,6 +1246,9 @@ namespace tespygtk
             "Cancel",ResponseType.Cancel,
             "Open",ResponseType.Accept);
             //filechooser.Run();
+            Label winlabel = new Label("Sélectionner le dossier racine du jeux");
+            filechooser.ContentArea.PackStart (winlabel, true, false, 10);
+            filechooser.ShowAll();
             Gtk.ResponseType dialog = (Gtk.ResponseType)filechooser.Run();
             
             string folder = string.Empty;
@@ -1374,13 +1376,8 @@ namespace tespygtk
 
         private void homeselection_RowActivated(object sender, RowActivatedArgs args)
         {
-            if (editchange) {
-                bool res = msg_sure();
-                if (!res){
-                    return;
-                }
-                _infotexte.Visible = false;
-                editchange = false;
+            if(msg_sure()){
+                return;
             }
             
             //select
@@ -1397,22 +1394,26 @@ namespace tespygtk
 
         public bool msg_sure() 
         {
-            MessageDialog md = new MessageDialog (this, 
-            DialogFlags.DestroyWithParent, MessageType.Warning, 
-            ButtonsType.OkCancel, "ATTENTION : Modification non Enregistrée \nSi vous continuez les modifications ne seront pas pris en compte. (Continuer ?)");
-            //md.Run();
-            Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
-            md.Destroy();
+            if (editchange) {
+                MessageDialog md = new MessageDialog (this, 
+                DialogFlags.DestroyWithParent, MessageType.Warning, 
+                ButtonsType.OkCancel, "ATTENTION : Modification non Enregistrée \nSi vous continuez les modifications ne seront pas pris en compte. (Continuer ?)");
+                //md.Run();
+                Gtk.ResponseType res = (Gtk.ResponseType)md.Run();
+                md.Destroy();
 
-            if (res == ResponseType.Ok)
-            {
-                return true;
+                if (res == ResponseType.Ok)
+                {
+                    _infotexte.Visible = false;
+                    editchange = false;
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
             }
-            else
-            {
-                return false;
-            }
-            
+            return false;
         }  
 
     	private void OnWidgetDrawn (object o, DrawnArgs args) {
